@@ -3,6 +3,9 @@ from rdkit.Chem import FragmentCatalog, RDConfig, Draw
 from collections import defaultdict
 import os
 
+# The following code is designed to test RDKit's tools 
+# on a single molecule defined by its SMILES representation
+
 # 1. Load RDKit functional groups definition file
 fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
 
