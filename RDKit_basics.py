@@ -7,7 +7,7 @@ import os
 # on a single molecule defined by its SMILES representation
 
 # 1. Load RDKit functional groups definition file
-fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
+fName = os.path.join(os.path.dirname(__file__), 'CustomFunctionalGroups.txt')
 
 # 2. Create fragment parameters (fragments between 1 and 6 atoms)
 fparams = FragmentCatalog.FragCatParams(1, 1, fName)
@@ -18,7 +18,7 @@ fcat = FragmentCatalog.FragCatalog(fparams)
 fcgen = FragmentCatalog.FragCatGenerator()
 
 # 4. Define the molecule via SMILES
-smiles = 'OCC(NC1CC1)CCC'
+smiles = 'CC(=O)Oc1ccccc1C(=O)O'
 mol = Chem.MolFromSmiles(smiles)
 
 # 5. Count atoms C, H, O, N, F in the whole molecule
