@@ -5,7 +5,7 @@ from collections import defaultdict
 import os
 import pandas as pd
 import pandas as pd
-from Utils import build_fragment_catalog, count_functional_groups
+from Utils import build_fragment_catalog, atom_count_from_smiles, count_functional_groups,  binary_fingerprint_from_smiles
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
@@ -14,5 +14,7 @@ smiles_list = df['smiles'].tolist()
 
 # Build fragment catalog 
 fcat, fparams = build_fragment_catalog(smiles_list)
-print(f"\nNumber of fragments in catalog: {fcat.GetNumEntries()}")
+num_fr = fcat.GetNumEntries()
+print(f"\nNumber of fragments in catalog: {num_fr}")
+
 

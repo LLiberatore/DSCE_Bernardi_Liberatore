@@ -57,3 +57,14 @@ def count_functional_groups(mol, fparams):
 
     # Convert to ordered list (vector)
     return [fg_counts[i] for i in range(fparams.GetNumFuncGroups())]
+
+def binary_fingerprint_from_smiles(smiles, fcat):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return []
+
+    fpgen = FragmentCatalog.FragFPGenerator()
+    fp = fpgen.GetFPForMol(mol, fcat)
+    n_bits = fp.GetNumBits()
+    return [1 if fp.GetBit(i) else 0 for i in range(n_bits)]
+
