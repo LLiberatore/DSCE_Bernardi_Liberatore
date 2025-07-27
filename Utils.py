@@ -37,3 +37,23 @@ def atom_count_from_smiles(smiles):
 
     return [atom_counts['C'], atom_counts['H'], atom_counts['O'], atom_counts['N'], atom_counts['F']]
 
+def count_functional_groups(mol, fparams):
+    
+    fg_counts = defaultdict(int)
+    seen_matches = set()
+
+    for fid in range(fparams.GetNumFuncGroups()):
+        fg = fparams.GetFuncGroup(fid)
+        smarts = Chem.MolToSmarts(fg)
+        smarts_mol = Chem.MolFromSmarts(smarts)
+
+        matches = mol.GetSubstructMatches(smarts_mol)
+        for match in matches:
+            atom_set = frozenset(match) # convert match to immutable set
+            key = (fid, atom_set)
+            if key not in seen_matches:
+                seen_matches.add(key)
+                fg_counts[fid] += 1
+
+    # Convert to ordered list (vector)
+    return [fg_counts[i] for i in range(fparams.GetNumFuncGroups())]
