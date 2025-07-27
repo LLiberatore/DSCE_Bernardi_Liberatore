@@ -18,7 +18,7 @@ fcat = FragmentCatalog.FragCatalog(fparams)
 fcgen = FragmentCatalog.FragCatGenerator()
 
 # 4. Define the molecule via SMILES
-smiles = 'OCC(NC1CC1)CCC'
+smiles = 'c1ccccc1'
 mol = Chem.MolFromSmiles(smiles)
 
 # 5. Count atoms C, H, O, N, F in the whole molecule
