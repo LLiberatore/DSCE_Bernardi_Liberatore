@@ -9,7 +9,7 @@ from Utils import build_fragment_catalog, atom_count_from_smiles, count_function
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
-df = df.head(1000)  # Limit to 1000 molecules
+df = df.head(10000)  # Limit to 10000 molecules
 smiles_list = df['smiles'].tolist()
 
 # Build fragment catalog 
@@ -17,7 +17,7 @@ fcat, fparams = build_fragment_catalog(smiles_list)
 num_fr = fcat.GetNumEntries()
 print(f"\nNumber of fragments in catalog: {num_fr}")
 
-# Initialize list to collect feature vectors
+# Input Matrix Construction
 features = []
 
 for smi in smiles_list:
@@ -31,5 +31,7 @@ for smi in smiles_list:
 
 X = np.array(features) # Convert feature matrix to numpy array
 
-
+# Labels Matrix Construction
+target_cols = [col for col in df.columns if col not in  ['smiles', 'tag', 'index']]
+Y_labels = df[target_cols].to_numpy(dtype=np.float32) # Convert to numpy array
 
