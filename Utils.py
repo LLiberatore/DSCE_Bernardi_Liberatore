@@ -68,3 +68,11 @@ def binary_fingerprint_from_smiles(smiles, fcat):
     n_bits = fp.GetNumBits()
     return [1 if fp.GetBit(i) else 0 for i in range(n_bits)]
 
+# NN training functions
+
+def extract_history(history_dict):
+    mse_train = history_dict.get('loss', [])
+    mse_val = history_dict.get('val_loss', [])
+    return mse_train, mse_val
+
+

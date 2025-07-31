@@ -5,12 +5,15 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 import pandas as pd
 import os
+import json
+from Utils import extract_history
 
 epochs = 200
-patience = int(0.2 * epochs)
+patience = int(0.2 * epochs) # 20% of total epochs
 
-Load_model = False
+Load_model = True
 model_path = "trained_model.keras"
+history_path = "training_history.json"
 
 # Load preprocessed data
 X = np.load("X_features.npy")
@@ -31,6 +34,11 @@ Y_train_scaled = scaler_Y.fit_transform(Y_train)
 if Load_model and os.path.exists(model_path):
     print("------- [INFO] Loading pre-trained model -------")
     net = tf.keras.models.load_model(model_path)
+    
+    if os.path.exists(history_path):   # Load training history
+        with open(history_path, "r") as f:
+            history_dict = json.load(f)
+            MSE_training_history, MSE_val_history = extract_history(history_dict)
 else:
     print("------- [INFO] Training model from scratch -------")
     # Define network
@@ -54,22 +62,24 @@ else:
     # Train
     history = net.fit(X_train_scaled, Y_train_scaled, validation_split = 0.2, epochs=epochs, batch_size=32, verbose=1, callbacks=[early_stop])
     
+    # Extract and save training history to JSON
+    MSE_training_history, MSE_val_history = extract_history(history.history)
+    with open(history_path, "w") as f:
+        json.dump(history.history, f)
+    
     # Save model after training
     print("------- [INFO] Trained model saved -------")
     net.save(model_path)
     
 # Plot training and validation loss evolution
 plt.figure(figsize=(8, 5))
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.plot(MSE_training_history, label='Training Loss')
+plt.plot(MSE_val_history, label='Validation Loss')
 plt.xlabel('Epoch')
 plt.ylabel('MSE')
 plt.title('Training and Validation Loss')
 plt.legend()
-plt.grid(True)
-plt.tight_layout()
 plt.show()
-
 
 # Predict (rescale predictions)
 Y_pred_scaled = net.predict(X_test_scaled)
