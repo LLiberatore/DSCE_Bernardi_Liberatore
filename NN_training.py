@@ -9,7 +9,7 @@ import os
 epochs = 200
 patience = int(0.2 * epochs)
 
-Load_model = True
+Load_model = False
 model_path = "trained_model.keras"
 
 # Load preprocessed data
@@ -57,7 +57,21 @@ else:
     # Save model after training
     print("------- [INFO] Trained model saved -------")
     net.save(model_path)
+    
+# Plot training and validation loss evolution
+plt.figure(figsize=(8, 5))
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('MSE')
+plt.title('Training and Validation Loss')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
 
 # Predict (rescale predictions)
 Y_pred_scaled = net.predict(X_test_scaled)
 Y_pred = scaler_Y.inverse_transform(Y_pred_scaled)
+
