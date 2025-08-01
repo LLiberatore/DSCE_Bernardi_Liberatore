@@ -55,7 +55,7 @@
 -CF3		*-[C;D4](F)(F)F		trifluoromethyl
 -C#CH	*-[C;D2]#[C;D1;H]	acetylenes
 -cPropyl	*-[C;D3]1-[C;D2]-[C;D2]1	cyclopropyl	
--c1ccccc1	[c]1[c][c][c][c][c]1	benzene ring
+//-c1ccccc1	[c]1[c][c][c][c][c]1	benzene ring
 
 //--------------------------------------------------
 //Really teeny stuff:

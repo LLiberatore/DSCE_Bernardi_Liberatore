@@ -8,7 +8,7 @@ import os
 import json
 from Utils import extract_history
 
-epochs = 200
+epochs = 2000
 patience = int(0.2 * epochs) # 20% of total epochs
 
 Load_model = True
@@ -36,7 +36,7 @@ if Load_model and os.path.exists(model_path):
     net = tf.keras.models.load_model(model_path)
     
     if os.path.exists(history_path):   # Load training history
-        with open(history_path, "r") as f:
+        with open(history_path, "r") as f: 
             history_dict = json.load(f)
             MSE_training_history, MSE_val_history = extract_history(history_dict)
 else:
@@ -44,6 +44,7 @@ else:
     # Define network
     net = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=(X_train.shape[1],)),
+        tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(64, activation='relu'),
         tf.keras.layers.Dense(32, activation='relu'),
         tf.keras.layers.Dense(Y_labels.shape[1], activation='linear'),
@@ -84,4 +85,48 @@ plt.show()
 # Predict (rescale predictions)
 Y_pred_scaled = net.predict(X_test_scaled)
 Y_pred = scaler_Y.inverse_transform(Y_pred_scaled)
+
+# Property names + u.m.
+property_names = [
+    'μ (D)',              # dipole moment
+    'α (a₀³)',            # isotropic polarizability
+    'ε_HOMO (Ha)',        # energy of HOMO
+    'ε_LUMO (Ha)',        # energy of LUMO
+    'ε_gap (Ha)',         # HOMO–LUMO gap
+    '⟨r²⟩ (a₀²)',         # electronic spatial extent
+    'zpve (Ha)',          # zero-point vibrational energy
+    'U₀ (Ha)',            # internal energy at 0 K
+    'U (Ha)',             # internal energy at 298.15 K
+    'H (Ha)',             # enthalpy at 298.15 K
+    'G (Ha)',             # free energy at 298.15 K
+    'Cᵥ (cal/mol·K)'      # heat capacity at 298.15 K
+]
+
+# Create directory if it doesn't exist
+save_dir = "Plots"
+os.makedirs(save_dir, exist_ok=True)
+
+# Parity plot 4x3 per tutte le molecole del test set
+fig, axes = plt.subplots(4, 3, figsize=(16, 13))
+fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
+
+for i, ax in enumerate(axes.ravel()):
+    ax.scatter(Y_test[:, i], Y_pred[:, i], alpha=0.4, edgecolor='k', linewidth=0.3, s=20)
+    ax.plot([Y_test[:, i].min(), Y_test[:, i].max()],
+            [Y_test[:, i].min(), Y_test[:, i].max()],
+            'r--', linewidth=1.2)
+    ax.set_title(property_names[i], fontsize=13)
+    ax.set_xlabel('True', fontsize=10)
+    ax.set_ylabel('Predicted', fontsize=10)
+    ax.tick_params(axis='both', labelsize=9)
+    ax.grid(True)
+
+plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to prevent overlap 
+# Plot saving 
+png_path = os.path.join(save_dir, "parity_plots.png") 
+pdf_path = os.path.join(save_dir, "parity_plots.pdf") # higher quality
+plt.savefig(png_path, dpi=300)
+plt.savefig(pdf_path, format='pdf')
+plt.show()
+
 

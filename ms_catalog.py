@@ -30,5 +30,7 @@ for i, m in enumerate(ms):
     fp = fpgen.GetFPForMol(m, fcat) # Generate the fragment fingerprint (bit vector) for molecule m using the catalog fcat
     on_bits = list(fp.GetOnBits())  # Get the indices of bits that are set to 1 (fragments present in the molecule)
     print(f"Molecule {i+1}: {smiles_list[i]} Fragments present: {on_bits}")  # Print indices of fragments found
+    
+
 
 

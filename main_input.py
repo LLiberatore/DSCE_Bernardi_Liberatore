@@ -9,7 +9,7 @@ from Utils import build_fragment_catalog, atom_count_from_smiles, count_function
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
-df = df.head(10000)  # Limit to 10000 molecules
+df = df.head(20000)  # Limit to 10000 molecules
 smiles_list = df['smiles'].tolist()
 
 # Build fragment catalog 
