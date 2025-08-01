@@ -7,6 +7,8 @@ import pandas as pd
 import os
 import json
 from Utils import extract_history
+from sklearn.metrics import r2_score
+
 
 epochs = 2000
 patience = int(0.2 * epochs) # 20% of total epochs
@@ -86,6 +88,9 @@ plt.show()
 Y_pred_scaled = net.predict(X_test_scaled)
 Y_pred = scaler_Y.inverse_transform(Y_pred_scaled)
 
+# r2 score for each property
+r2_scores = [r2_score(Y_test[:, i], Y_pred[:, i]) for i in range(Y_test.shape[1])]
+
 # Property names + u.m.
 property_names = [
     'μ (D)',              # dipole moment
@@ -116,6 +121,9 @@ for i, ax in enumerate(axes.ravel()):
             [Y_test[:, i].min(), Y_test[:, i].max()],
             'r--', linewidth=1.2)
     ax.set_title(property_names[i], fontsize=13)
+    ax.text(0.05, 0.90, f"$R^2$ = {r2_scores[i]:.3f}", transform=ax.transAxes,  # top add R2 to the plot
+         fontsize=11, verticalalignment='top', horizontalalignment='left',
+         bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='gray', alpha=0.7))
     ax.set_xlabel('True', fontsize=10)
     ax.set_ylabel('Predicted', fontsize=10)
     ax.tick_params(axis='both', labelsize=9)
