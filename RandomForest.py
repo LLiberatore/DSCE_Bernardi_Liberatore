@@ -8,9 +8,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-
 start = timer()
-
 
 # Dataset loading
 X = np.load('X_features.npy')
@@ -18,7 +16,6 @@ Y_labels = np.load('Y_labels.npy')
 
 # Split train/test
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, random_state=0)
-
 
 # Random Forest
 n_estimators = 100  # Number of tress in the forest
@@ -36,8 +33,7 @@ end = timer()
 # print(f"MSE: {mse:.4f}")
 # print(f"MAE: {mae:.4f}")
 # print(f"R2 score: {r2:.4f}")
-print(f"Tempo di esecuzione: {end - start:.2f} secondi")
-
+print(f"Time of esecution: {end - start:.2f} seconds")
 
 # Parity Plots
 property_names = [
