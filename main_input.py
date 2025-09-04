@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Utils import build_fragment_catalog, atom_count_from_smiles, count_functional_groups,  binary_fingerprint_from_smiles
+from Plot import plot_frequency
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
@@ -57,26 +58,9 @@ freq_fragments = X_fragments.sum(axis=0)
 threshold = 100 # treshold for filtering
 
 # Functional groups absolute frequency plot
-plt.figure(figsize=(12,5))
-plt.bar(range(num_func_groups), freq_func_groups)
-plt.axhline(threshold, color='red', linestyle='--', label=f"Threshold = {threshold}")
-plt.xlabel("Functional Group ID")
-plt.ylabel("Frequency (occurrences)")
-plt.title("Functional Group Frequencies in Dataset")
-plt.legend()
-plt.tight_layout()
-plt.show()
-
+plot_frequency(freq_func_groups, "Functional Group", threshold)
 # Fragments absolute frequency plot
-plt.figure(figsize=(12,5))
-plt.bar(range(num_fragments), freq_fragments)
-plt.axhline(threshold, color='red', linestyle='--', label=f"Threshold = {threshold}")
-plt.xlabel("Fragment ID")
-plt.ylabel("Frequency (occurrences)")
-plt.title("Fragment Frequencies in Dataset")
-plt.legend()
-plt.tight_layout()
-plt.show()
+plot_frequency(freq_fragments, "Fragment", threshold)
 
 # Filter functional groups index and fragments based on frequency threshold
 keep_func_ids = [i for i, f in enumerate(freq_func_groups) if f > threshold] # enumerate() to get both index and element
@@ -94,3 +78,7 @@ print(f"Filtered X shape: {X_filtered.shape}")
 
 # Save the filtered version
 np.save("X_features_filtered.npy", X_filtered)
+
+# Plot after filtering
+plot_frequency(X_func_groups[:, keep_func_ids].sum(axis=0), "Functional Group (filtered)", threshold)
+plot_frequency(X_fragments[:, keep_frag_ids].sum(axis=0), "Fragment (filtered)", threshold)
