@@ -13,12 +13,12 @@ from sklearn.metrics import r2_score
 epochs = 2000
 patience = int(0.2 * epochs) # 20% of total epochs
 
-Load_model = True
+Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
 
 # Load preprocessed data
-X = np.load("X_features.npy")
+X = np.load("X_features_filtered.npy")
 Y_labels = np.load("Y_labels.npy")
 
 # Split
@@ -46,7 +46,7 @@ else:
     # Define network
     net = tf.keras.models.Sequential([
         tf.keras.layers.Input(shape=(X_train.shape[1],)),
-        tf.keras.layers.Dense(128, activation='relu'),
+        #tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(64, activation='relu'),
         tf.keras.layers.Dense(32, activation='relu'),
         tf.keras.layers.Dense(Y_labels.shape[1], activation='linear'),
@@ -136,5 +136,4 @@ pdf_path = os.path.join(save_dir, "parity_plots.pdf") # higher quality
 plt.savefig(png_path, dpi=300)
 plt.savefig(pdf_path, format='pdf')
 plt.show()
-
 
