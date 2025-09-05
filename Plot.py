@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from Utils import save_plot
+from rdkit.Chem import Draw
+from rdkit import Chem
 import os
 
 def plot_frequency(freq_values, label, saving_name, x_labels=None):
@@ -28,3 +30,38 @@ def plot_frequency(freq_values, label, saving_name, x_labels=None):
     plt.tight_layout()
     save_plot(fig, saving_name, save_dir)
     plt.show()
+
+def plot_functional_groups(fparams, fids, freq_func_groups=None, sort_by_freq=False, save_path="functional_groups.png"):
+                                     
+    fg_mols = []
+    fg_labels = []
+
+    # Build (fid, freq) list
+    if freq_func_groups is not None:
+        func_with_freq = [(fid, freq_func_groups[fid]) for fid in fids]
+        if sort_by_freq:
+            func_with_freq = sorted(func_with_freq, key=lambda x: x[1], reverse=True)
+    else:
+        func_with_freq = [(fid, None) for fid in fids]
+
+    for fid, freq in func_with_freq:
+        fg = fparams.GetFuncGroup(fid)
+        label = fg.GetProp("_Name") if fg.HasProp("_Name") else f"FG-{fid}"
+        smarts = Chem.MolToSmarts(fg)
+        mol = Chem.MolFromSmarts(smarts)
+        if mol:
+            fg_mols.append(mol)
+            if freq is not None:
+                fg_labels.append(f"#{fid+1} {label} ({int(freq)})")
+            else:
+                fg_labels.append(f"#{fid+1} {label}")
+
+    img = Draw.MolsToGridImage(
+        fg_mols,
+        molsPerRow=5,
+        subImgSize=(250, 250),
+        legends=fg_labels
+    )
+    img.save(save_path + ".png")
+    img.save(save_path + ".pdf")
+    print(f"Saved: {save_path}.png and {save_path}.pdf")
