@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score
 epochs = 2000
 patience = int(0.2 * epochs) # 20% of total epochs
 
-Load_model = False
+Load_model = True
 model_path = "trained_model.keras"
 history_path = "training_history.json"
 

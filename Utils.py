@@ -76,3 +76,8 @@ def extract_history(history_dict):
     return mse_train, mse_val
 
 
+def save_plot(fig, filename_base, save_dir):
+    """Save a matplotlib figure in both PNG and PDF format."""
+    os.makedirs(save_dir, exist_ok=True) # to create directory if it doesn't exist
+    fig.savefig(os.path.join(save_dir, filename_base + ".png"))
+    fig.savefig(os.path.join(save_dir, filename_base + ".pdf"))
