@@ -9,14 +9,25 @@ import json
 from Utils import extract_history
 from sklearn.metrics import r2_score
 
-
 epochs = 2000
-patience = int(0.2 * epochs) # 20% of total epochs
+patience = int(0.05 * epochs)   # 20% of total epochs
 activation_function = "relu"   # "relu", "selu", "tanh"
-hidden_layers = [100, 50]
-Load_model = False
+hidden_layers = [100, 50, 25]
+Load_model = True
 model_path = "trained_model.keras"
 history_path = "training_history.json"
+
+# ------------ Path Management ---------------
+num_layers = len(hidden_layers)
+num_neurons = "_".join(map(str, hidden_layers))
+subfolder = f"{num_layers}layers_{num_neurons}neurons"
+
+base_dir = "saved_models"
+model_dir = os.path.join(base_dir, activation_function, subfolder)
+os.makedirs(model_dir, exist_ok=True)
+
+model_path = os.path.join(model_dir, "model.keras")
+history_path = os.path.join(model_dir, "training_history.json")
 
 # Load preprocessed data
 X = np.load("X_features_filtered.npy")
@@ -35,7 +46,7 @@ scaler_Y = MinMaxScaler()
 Y_train_scaled = scaler_Y.fit_transform(Y_train)
 
 if Load_model and os.path.exists(model_path):
-    print("------- [INFO] Loading pre-trained model -------")
+    print(f"------- [INFO] Loading pre-trained model from {model_path} -------")
     net = tf.keras.models.load_model(model_path)
     
     if os.path.exists(history_path):   # Load training history
@@ -47,10 +58,8 @@ else:
     # Define network
     net = tf.keras.models.Sequential()
     net.add(tf.keras.layers.Input(shape=(X_train.shape[1],)))
-    
     for units in hidden_layers:
         net.add(tf.keras.layers.Dense(units, activation=activation_function))
-    
     net.add(tf.keras.layers.Dense(Y_labels.shape[1], activation="linear"))
     
     # Compile
