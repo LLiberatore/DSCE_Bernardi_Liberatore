@@ -61,6 +61,10 @@ threshold = 100 # treshold for filtering
 keep_func_ids = [i for i, f in enumerate(freq_func_groups) if f > threshold] # enumerate() to get both index and element
 keep_frag_ids = [i for i, f in enumerate(freq_fragments) if f > threshold]
 
+# Count before/after filtering
+print(f"Functional groups: initial = {num_func_groups}, after filtering = {len(keep_func_ids)}")
+print(f"Fragments: initial = {num_fragments}, after filtering = {len(keep_frag_ids)}")
+
 # Ricostruisci nuova X
 X_filtered = np.concatenate([
     X[:, :num_atoms],                   # Atoms
