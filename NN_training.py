@@ -12,8 +12,9 @@ from sklearn.metrics import r2_score
 
 epochs = 2000
 patience = int(0.2 * epochs) # 20% of total epochs
-
-Load_model = True
+activation_function = "relu"   # "relu", "selu", "tanh"
+hidden_layers = [100, 50]
+Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
 
@@ -44,13 +45,13 @@ if Load_model and os.path.exists(model_path):
 else:
     print("------- [INFO] Training model from scratch -------")
     # Define network
-    net = tf.keras.models.Sequential([
-        tf.keras.layers.Input(shape=(X_train.shape[1],)),
-        #tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dense(64, activation='relu'),
-        tf.keras.layers.Dense(32, activation='relu'),
-        tf.keras.layers.Dense(Y_labels.shape[1], activation='linear'),
-    ])
+    net = tf.keras.models.Sequential()
+    net.add(tf.keras.layers.Input(shape=(X_train.shape[1],)))
+    
+    for units in hidden_layers:
+        net.add(tf.keras.layers.Dense(units, activation=activation_function))
+    
+    net.add(tf.keras.layers.Dense(Y_labels.shape[1], activation="linear"))
     
     # Compile
     net.compile(optimizer='adam', loss='mse', metrics=['mse'])

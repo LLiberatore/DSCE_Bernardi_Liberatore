@@ -26,6 +26,7 @@ def plot_frequency(freq_values, label, saving_name, x_labels=None):
 
     plt.xlabel(f"{label} ID", fontsize=20)
     plt.ylabel("Frequency (occurrences)", fontsize=20)
+    plt.yscale("log")
     plt.yticks(fontsize=20)
     plt.tight_layout()
     save_plot(fig, saving_name, save_dir)
