@@ -25,7 +25,7 @@ num_neurons = "_".join(map(str, hidden_layers))
 subfolder = f"{num_layers}layers_{num_neurons}neurons"
 
 base_dir = "saved_models"
-model_dir = os.path.join(base_dir, activation_function, subfolder)
+model_dir = os.path.join(base_dir, info, activation_function, subfolder)
 os.makedirs(model_dir, exist_ok=True)
 
 model_path = os.path.join(model_dir, "model.keras")
@@ -125,7 +125,7 @@ property_names = [
 
 # ------------- Plot Section -------------
 plots_base_dir = "Plots"
-plots_dir = os.path.join(plots_base_dir, activation_function, subfolder)
+plots_dir = os.path.join(plots_base_dir, info, activation_function, subfolder)
 os.makedirs(plots_dir, exist_ok=True)
 
 # Plot training curves
