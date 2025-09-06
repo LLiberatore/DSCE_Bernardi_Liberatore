@@ -11,8 +11,8 @@ from sklearn.metrics import r2_score
 
 epochs = 2000
 patience = int(0.05 * epochs)   # 20% of total epochs
-activation_function = "relu"   # "relu", "selu", "tanh"
-hidden_layers = [100, 50, 25]
+activation_function = "tanh"   # "relu", "selu", "tanh"
+hidden_layers = [50, 25]
 Load_model = True
 model_path = "trained_model.keras"
 history_path = "training_history.json"
@@ -117,9 +117,25 @@ property_names = [
     'Cᵥ (cal/mol·K)'      # heat capacity at 298.15 K
 ]
 
-# Create directory if it doesn't exist
-save_dir = "Plots"
-os.makedirs(save_dir, exist_ok=True)
+# ------------- Plot Section -------------
+plots_base_dir = "Plots"
+plots_dir = os.path.join(plots_base_dir, activation_function, subfolder)
+os.makedirs(plots_dir, exist_ok=True)
+
+# Training curves
+plt.figure(figsize=(8, 5))
+plt.plot(MSE_training_history, label='Training Loss')
+plt.plot(MSE_val_history, label='Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('MSE')
+plt.title('Training and Validation Loss')
+plt.legend()
+
+loss_png = os.path.join(plots_dir, "training_loss.png")
+loss_pdf = os.path.join(plots_dir, "training_loss.pdf")
+plt.savefig(loss_png, dpi=300)
+plt.savefig(loss_pdf, format="pdf")
+plt.show()
 
 # Parity plot 4x3 per tutte le molecole del test set
 fig, axes = plt.subplots(4, 3, figsize=(16, 13))
@@ -131,7 +147,7 @@ for i, ax in enumerate(axes.ravel()):
             [Y_test[:, i].min(), Y_test[:, i].max()],
             'r--', linewidth=1.2)
     ax.set_title(property_names[i], fontsize=13)
-    ax.text(0.05, 0.90, f"$R^2$ = {r2_scores[i]:.3f}", transform=ax.transAxes,  # top add R2 to the plot
+    ax.text(0.05, 0.90, f"$R^2$ = {r2_scores[i]:.3f}", transform=ax.transAxes,
          fontsize=11, verticalalignment='top', horizontalalignment='left',
          bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='gray', alpha=0.7))
     ax.set_xlabel('True', fontsize=10)
@@ -139,11 +155,10 @@ for i, ax in enumerate(axes.ravel()):
     ax.tick_params(axis='both', labelsize=9)
     ax.grid(True)
 
-plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to prevent overlap 
-# Plot saving 
-png_path = os.path.join(save_dir, "parity_plots.png") 
-pdf_path = os.path.join(save_dir, "parity_plots.pdf") # higher quality
-plt.savefig(png_path, dpi=300)
-plt.savefig(pdf_path, format='pdf')
-plt.show()
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 
+parity_png = os.path.join(plots_dir, "parity_plots.png")
+parity_pdf = os.path.join(plots_dir, "parity_plots.pdf")
+plt.savefig(parity_png, dpi=300)
+plt.savefig(parity_pdf, format="pdf")
+plt.show()
