@@ -11,7 +11,7 @@ from Plot import plot_frequency, plot_functional_groups
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
-df = df.head(5000)  
+df = df.head(133885)  
 smiles_list = df['smiles'].tolist()
 
 # Build fragment catalog 

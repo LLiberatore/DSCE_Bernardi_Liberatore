@@ -1,0 +1,28 @@
+Experiment Information
+======================
+Info type: FR
+Activation function: tanh
+Hidden layers: [100, 50]
+Epochs: 2000
+Patience: 100
+Training samples: 4000
+Test samples: 1000
+Total parameters: 10562
+Training time: 116.83 seconds
+
+Performance Metrics
+===================
+μ (D): R2 = 0.5875
+α (a₀³): R2 = 0.9764
+ε_HOMO (Ha): R2 = 0.8554
+ε_LUMO (Ha): R2 = 0.9278
+ε_gap (Ha): R2 = 0.8912
+⟨r²⟩ (a₀²): R2 = 0.8509
+zpve (Ha): R2 = 0.9933
+U₀ (Ha): R2 = 0.9962
+U (Ha): R2 = 0.9964
+H (Ha): R2 = 0.9966
+G (Ha): R2 = 0.9963
+Cᵥ (cal/mol·K): R2 = 0.9559
+
+Test MSE (average over all properties): 5.793180e+02

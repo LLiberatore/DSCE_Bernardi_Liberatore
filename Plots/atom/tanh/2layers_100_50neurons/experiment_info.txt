@@ -1,0 +1,28 @@
+Experiment Information
+======================
+Info type: atom
+Activation function: tanh
+Hidden layers: [100, 50]
+Epochs: 2000
+Patience: 100
+Training samples: 4000
+Test samples: 1000
+Total parameters: 6262
+Training time: 104.62 seconds
+
+Performance Metrics
+===================
+μ (D): R2 = 0.3243
+α (a₀³): R2 = 0.9365
+ε_HOMO (Ha): R2 = 0.4230
+ε_LUMO (Ha): R2 = 0.5918
+ε_gap (Ha): R2 = 0.5738
+⟨r²⟩ (a₀²): R2 = 0.5995
+zpve (Ha): R2 = 0.9969
+U₀ (Ha): R2 = 0.9986
+U (Ha): R2 = 0.9985
+H (Ha): R2 = 0.9968
+G (Ha): R2 = 0.9990
+Cᵥ (cal/mol·K): R2 = 0.8028
+
+Test MSE (average over all properties): 1.549402e+03

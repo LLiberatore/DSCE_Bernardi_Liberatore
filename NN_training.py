@@ -6,15 +6,17 @@ import tensorflow as tf
 import pandas as pd
 import os
 import json
-from Utils import extract_history
+import time
+from Utils import extract_history, save_experiment_info
 from sklearn.metrics import r2_score
 from Plot import plot_training_curves, plot_parity_plots
 
 epochs = 2000
 patience = int(0.05 * epochs)   # 5% of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
-info = "FG"
-hidden_layers = [50, 50]
+info = "FR"                     # "atom", "FG", "FR"
+
+hidden_layers = [100, 50]
 Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
@@ -89,7 +91,9 @@ else:
     )
     
     # Train
+    start_time = time.time()
     history = net.fit(X_train_scaled, Y_train_scaled, validation_split = 0.2, epochs=epochs, batch_size=32, verbose=1, callbacks=[early_stop])
+    training_time = time.time() - start_time
     
     # Extract and save training history to JSON
     MSE_training_history, MSE_val_history = extract_history(history.history)
@@ -133,3 +137,6 @@ plot_training_curves(MSE_training_history, MSE_val_history, plots_dir)
 
 # Parity plot 4x3 grid for all the molecules
 plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
+
+# ---------------- Save experiment info and metrics -------------------------
+save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores, Y_test, Y_pred, net, training_time)

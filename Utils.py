@@ -5,7 +5,7 @@ from rdkit import RDConfig
 from collections import defaultdict
 import os
 import pandas as pd
-
+import numpy as np
 
 def build_fragment_catalog(smiles_list, fg_filename='CustomFunctionalGroups.txt'):
     
@@ -81,3 +81,37 @@ def save_plot(fig, filename_base, save_dir):
     os.makedirs(save_dir, exist_ok=True) # to create directory if it doesn't exist
     fig.savefig(os.path.join(save_dir, filename_base + ".png"))
     fig.savefig(os.path.join(save_dir, filename_base + ".pdf"))
+
+def save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience,X_train, X_test, property_names, r2_scores, Y_test, Y_pred, net, training_time):
+
+    info_file = os.path.join(plots_dir, "experiment_info.txt")
+    with open(info_file, "w", encoding="utf-8") as f:   
+        f.write("Experiment Information\n")
+        f.write("======================\n")
+        f.write(f"Info type: {info}\n")
+        f.write(f"Activation function: {activation_function}\n")
+        f.write(f"Hidden layers: {hidden_layers}\n")
+        f.write(f"Epochs: {epochs}\n")
+        f.write(f"Patience: {patience}\n")
+        f.write(f"Training samples: {X_train.shape[0]}\n")
+        f.write(f"Test samples: {X_test.shape[0]}\n")
+        f.write(f"Total parameters: {net.count_params()}\n")
+        f.write(f"Training time: {training_time:.2f} seconds\n\n")
+        
+        f.write("Performance Metrics\n")
+        f.write("===================\n")
+        for name, r2 in zip(property_names, r2_scores):
+            f.write(f"{name}: R2 = {r2:.4f}\n")
+        
+        mse_test = np.mean((Y_test - Y_pred) ** 2)
+        f.write(f"\nTest MSE (average over all properties): {mse_test:.6e}\n")
+
+    print(f"[INFO] Experiment details saved to {info_file}")
+
+    # Print results in console
+    print("\n------- Test Performance -------")
+    print(f"Total parameters: {net.count_params()}")
+    print(f"Training time: {training_time:.2f} seconds")
+    for name, r2 in zip(property_names, r2_scores):
+        print(f"{name}: R² = {r2:.4f}")
+    print(f"Test MSE (average): {mse_test:.6e}")
