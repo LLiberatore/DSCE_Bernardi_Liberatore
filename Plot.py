@@ -66,3 +66,46 @@ def plot_functional_groups(fparams, fids, freq_func_groups=None, sort_by_freq=Fa
     img.save(save_path + ".png")
     img.save(save_path + ".pdf")
     print(f"Saved: {save_path}.png and {save_path}.pdf")
+
+import matplotlib.pyplot as plt
+import os
+
+def plot_training_curves(MSE_training_history, MSE_val_history, plots_dir):
+    plt.figure(figsize=(8, 5))
+    plt.plot(MSE_training_history, label='Training Loss')
+    plt.plot(MSE_val_history, label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('MSE')
+    plt.title('Training and Validation Loss')
+    plt.legend()
+    # Save plots
+    loss_png = os.path.join(plots_dir, "training_loss.png")
+    loss_pdf = os.path.join(plots_dir, "training_loss.pdf")
+    plt.savefig(loss_png, dpi=300)
+    plt.savefig(loss_pdf, format="pdf")
+    plt.show()
+    print(f"[INFO] Training curves saved in {plots_dir}")
+
+def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
+    fig, axes = plt.subplots(4, 3, figsize=(16, 13))
+    fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
+    for i, ax in enumerate(axes.ravel()):
+        ax.scatter(Y_test[:, i], Y_pred[:, i], alpha=0.4, edgecolor='k', linewidth=0.3, s=20)
+        ax.plot([Y_test[:, i].min(), Y_test[:, i].max()],
+                [Y_test[:, i].min(), Y_test[:, i].max()],
+                'r--', linewidth=1.2)
+        ax.set_title(property_names[i], fontsize=13)
+        ax.text(0.05, 0.90, f"$R^2$ = {r2_scores[i]:.3f}", transform=ax.transAxes,
+                fontsize=11, verticalalignment='top', horizontalalignment='left',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='gray', alpha=0.7))
+        ax.set_xlabel('True', fontsize=10)
+        ax.set_ylabel('Predicted', fontsize=10)
+        ax.tick_params(axis='both', labelsize=9)
+        ax.grid(True)
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    parity_png = os.path.join(plots_dir, "parity_plots.png")
+    parity_pdf = os.path.join(plots_dir, "parity_plots.pdf")
+    plt.savefig(parity_png, dpi=300)
+    plt.savefig(parity_pdf, format="pdf")
+    plt.show()
+    print(f"[INFO] Parity plots saved in {plots_dir}")

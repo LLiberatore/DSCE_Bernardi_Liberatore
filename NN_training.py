@@ -8,12 +8,13 @@ import os
 import json
 from Utils import extract_history
 from sklearn.metrics import r2_score
+from Plot import plot_training_curves, plot_parity_plots
 
 epochs = 2000
 patience = int(0.05 * epochs)   # 5% of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
 info = "FG"
-hidden_layers = [50, 26]
+hidden_layers = [50, 50]
 Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
@@ -127,43 +128,8 @@ plots_base_dir = "Plots"
 plots_dir = os.path.join(plots_base_dir, activation_function, subfolder)
 os.makedirs(plots_dir, exist_ok=True)
 
-# Training curves
-plt.figure(figsize=(8, 5))
-plt.plot(MSE_training_history, label='Training Loss')
-plt.plot(MSE_val_history, label='Validation Loss')
-plt.xlabel('Epoch')
-plt.ylabel('MSE')
-plt.title('Training and Validation Loss')
-plt.legend()
-
-loss_png = os.path.join(plots_dir, "training_loss.png")
-loss_pdf = os.path.join(plots_dir, "training_loss.pdf")
-plt.savefig(loss_png, dpi=300)
-plt.savefig(loss_pdf, format="pdf")
-plt.show()
+# Plot training curves
+plot_training_curves(MSE_training_history, MSE_val_history, plots_dir)
 
 # Parity plot 4x3 grid for all the molecules
-fig, axes = plt.subplots(4, 3, figsize=(16, 13))
-fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
-
-for i, ax in enumerate(axes.ravel()):
-    ax.scatter(Y_test[:, i], Y_pred[:, i], alpha=0.4, edgecolor='k', linewidth=0.3, s=20)
-    ax.plot([Y_test[:, i].min(), Y_test[:, i].max()],
-            [Y_test[:, i].min(), Y_test[:, i].max()],
-            'r--', linewidth=1.2)
-    ax.set_title(property_names[i], fontsize=13)
-    ax.text(0.05, 0.90, f"$R^2$ = {r2_scores[i]:.3f}", transform=ax.transAxes,
-         fontsize=11, verticalalignment='top', horizontalalignment='left',
-         bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='gray', alpha=0.7))
-    ax.set_xlabel('True', fontsize=10)
-    ax.set_ylabel('Predicted', fontsize=10)
-    ax.tick_params(axis='both', labelsize=9)
-    ax.grid(True)
-
-plt.tight_layout(rect=[0, 0, 1, 0.95])
-
-parity_png = os.path.join(plots_dir, "parity_plots.png")
-parity_pdf = os.path.join(plots_dir, "parity_plots.pdf")
-plt.savefig(parity_png, dpi=300)
-plt.savefig(parity_pdf, format="pdf")
-plt.show()
+plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
