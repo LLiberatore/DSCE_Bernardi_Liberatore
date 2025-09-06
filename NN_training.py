@@ -14,9 +14,9 @@ from Plot import plot_training_curves, plot_parity_plots
 epochs = 2000
 patience = int(0.05 * epochs)   # 5% of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
-info = "FR"                     # "atom", "FG", "FR"
+info = "FG"                     # "atom", "FG", "FR"
 
-hidden_layers = [100, 50]
+hidden_layers = [20, 10]
 Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
