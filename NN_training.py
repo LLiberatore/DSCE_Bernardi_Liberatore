@@ -10,10 +10,11 @@ from Utils import extract_history
 from sklearn.metrics import r2_score
 
 epochs = 2000
-patience = int(0.05 * epochs)   # 20% of total epochs
-activation_function = "tanh"   # "relu", "selu", "tanh"
-hidden_layers = [50, 25]
-Load_model = True
+patience = int(0.05 * epochs)   # 5% of total epochs
+activation_function = "tanh"    # "relu", "selu", "tanh"
+info = "FG"
+hidden_layers = [50, 26]
+Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
 
@@ -29,9 +30,22 @@ os.makedirs(model_dir, exist_ok=True)
 model_path = os.path.join(model_dir, "model.keras")
 history_path = os.path.join(model_dir, "training_history.json")
 
+# ------------ Data Loading and Preprocessing ---------------
 # Load preprocessed data
 X = np.load("X_features_filtered.npy")
 Y_labels = np.load("Y_labels.npy")
+
+num_atoms = 5
+num_func_groups = 22  # after filtering, 22 functional groups remain
+
+if info == "atom":
+    X = X[:, :num_atoms]
+elif info == "FG":
+    X = X[:, :num_atoms + num_func_groups]
+elif info == "FR":
+    X = X  # keep all columns
+else:
+    raise ValueError("info must be 'atom', 'FG', or 'FR'")
 
 # Split
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, test_size=0.2, random_state=42)
@@ -45,6 +59,7 @@ X_test_scaled = scaler_X.transform(X_test)
 scaler_Y = MinMaxScaler()
 Y_train_scaled = scaler_Y.fit_transform(Y_train)
 
+# ------------ Model Definition, Training, and Evaluation ---------------
 if Load_model and os.path.exists(model_path):
     print(f"------- [INFO] Loading pre-trained model from {model_path} -------")
     net = tf.keras.models.load_model(model_path)
@@ -83,16 +98,6 @@ else:
     # Save model after training
     print("------- [INFO] Trained model saved -------")
     net.save(model_path)
-    
-# Plot training and validation loss evolution
-plt.figure(figsize=(8, 5))
-plt.plot(MSE_training_history, label='Training Loss')
-plt.plot(MSE_val_history, label='Validation Loss')
-plt.xlabel('Epoch')
-plt.ylabel('MSE')
-plt.title('Training and Validation Loss')
-plt.legend()
-plt.show()
 
 # Predict (rescale predictions)
 Y_pred_scaled = net.predict(X_test_scaled)
@@ -108,7 +113,7 @@ property_names = [
     'ε_HOMO (Ha)',        # energy of HOMO
     'ε_LUMO (Ha)',        # energy of LUMO
     'ε_gap (Ha)',         # HOMO–LUMO gap
-    '⟨r²⟩ (a₀²)',         # electronic spatial extent
+    '⟨r²⟩ (a₀²)',          # electronic spatial extent
     'zpve (Ha)',          # zero-point vibrational energy
     'U₀ (Ha)',            # internal energy at 0 K
     'U (Ha)',             # internal energy at 298.15 K
@@ -137,7 +142,7 @@ plt.savefig(loss_png, dpi=300)
 plt.savefig(loss_pdf, format="pdf")
 plt.show()
 
-# Parity plot 4x3 per tutte le molecole del test set
+# Parity plot 4x3 grid for all the molecules
 fig, axes = plt.subplots(4, 3, figsize=(16, 13))
 fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
 
