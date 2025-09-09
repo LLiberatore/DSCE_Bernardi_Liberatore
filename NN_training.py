@@ -12,53 +12,51 @@ from sklearn.metrics import r2_score
 from Plot import plot_training_curves, plot_parity_plots
 
 epochs = 2000
-patience = int(0.2 * epochs)   # 5% of total epochs
+patience = int(0.2 * epochs)    # 20 % of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
 info = "FR"                     # "atom", "FG", "FR"
 
-hidden_layers = [54]
-Load_model = False
-model_path = "trained_model.keras"
-history_path = "training_history.json"
+hidden_layers = [54]                   # [h1, h2 ...] list of hidden layer sizes
+Load_model = True                     # whether to load a pre-trained model or train from scratch
 
-# ------------ Path Management ---------------
+# ------------ Path Management (model saving/loading) ---------------
 num_layers = len(hidden_layers)
-num_neurons = "_".join(map(str, hidden_layers))
-subfolder = f"{num_layers}layers_{num_neurons}neurons"
+num_neurons = "_".join(map(str, hidden_layers))         # create a descriptive string from the list of hidden layers hidden_layers --> ex. [h1, h2, h3] -> "h1_h2_h3"
+subfolder = f"{num_layers}layers_{num_neurons}neurons"  # ex. "3layers_50_50_50neurons" (name of the subfolder to save plots and model)
 
 base_dir = "saved_models"
 model_dir = os.path.join(base_dir, info, activation_function, subfolder)
 os.makedirs(model_dir, exist_ok=True)
 
-model_path = os.path.join(model_dir, "model.keras")
-history_path = os.path.join(model_dir, "training_history.json")
+model_path = os.path.join(model_dir, "model.keras")             # where the model is saved/loaded
+history_path = os.path.join(model_dir, "training_history.json") # where the training history is saved/loaded (JSON file)
 
 # ------------ Data Loading and Preprocessing ---------------
-# Load preprocessed data
-X = np.load("X_features_filtered.npy")
-Y_labels = np.load("Y_labels.npy")
+X = np.load("X_features_filtered.npy") # Load preprocessed data
+Y_labels = np.load("Y_labels.npy")     # Load labels
 
 num_atoms = 5
-num_func_groups = 17  # after filtering, 22 functional groups remain
+num_func_groups = 17  # after filtering, 17 functional groups remain
 
-if info == "atom":
-    X = X[:, :num_atoms]
+# input selection
+if info == "atom":   
+    X = X[:, :num_atoms]                   # Select atomic features
 elif info == "FG":
-    X = X[:, :num_atoms + num_func_groups]
+    X = X[:, :num_atoms + num_func_groups] # Select atomic and functional group features
 elif info == "FR":
-    X = X  # keep all columns
+    X = X                                  # Select all features
 else:
     raise ValueError("info must be 'atom', 'FG', or 'FR'")
 
 # Split
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, test_size=0.2, random_state=42) # Split the data into training and testing sets
 
 # Scale inputs
-scaler_X = MinMaxScaler()
+scaler_X = MinMaxScaler()  # fitting over X_train to avoid data leakage
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
 
-# Scale outputs (trainin only)
+# Scale outputs 
 scaler_Y = MinMaxScaler()
 Y_train_scaled = scaler_Y.fit_transform(Y_train)
 Y_test_scaled = scaler_Y.transform(Y_test)   
@@ -67,11 +65,11 @@ Y_test_scaled = scaler_Y.transform(Y_test)
 if Load_model and os.path.exists(model_path):
     print(f"------- [INFO] Loading pre-trained model from {model_path} -------")
     net = tf.keras.models.load_model(model_path)
-    
-    if os.path.exists(history_path):   # Load training history
-        with open(history_path, "r") as f: 
+
+    if os.path.exists(history_path):        # Load training history
+        with open(history_path, "r") as f:  # "r" = reading mode
             history_dict = json.load(f)
-            MSE_training_history, MSE_val_history = extract_history(history_dict)
+            MSE_training_history, MSE_val_history = extract_history(history_dict) # "extract_history" from Utils.py --> extract training and validation MSE from history dictionary
 else:
     print("------- [INFO] Training model from scratch -------")
     # Define network
@@ -87,19 +85,19 @@ else:
     # Early stopping callback
     early_stop = tf.keras.callbacks.EarlyStopping(
         monitor = 'val_loss',           # monitor validation loss
-        patience = patience,            # stop if no improvement after 20% of total epochs
+        patience = patience,            # stop if no improvement after patience % of total epochs
         restore_best_weights = True     # restore weights from best epoch
     )
     
     # Train
-    start_time = time.time()
+    start_time = time.time()                 # start time measurement
     history = net.fit(X_train_scaled, Y_train_scaled, validation_split = 0.2, epochs=epochs, batch_size=32, verbose=1, callbacks=[early_stop])
-    training_time = time.time() - start_time
+    training_time = time.time() - start_time # end time measurement
     
     # Extract and save training history to JSON
     MSE_training_history, MSE_val_history = extract_history(history.history)
     with open(history_path, "w") as f:
-        json.dump(history.history, f)
+        json.dump(history.history, f) # save history as JSON
     
     # Save model after training
     print("------- [INFO] Trained model saved -------")
@@ -110,34 +108,18 @@ Y_pred_scaled = net.predict(X_test_scaled)
 Y_pred = scaler_Y.inverse_transform(Y_pred_scaled)
 
 # r2 score for each property
-r2_scores = [r2_score(Y_test[:, i], Y_pred[:, i]) for i in range(Y_test.shape[1])]
+r2_scores = [r2_score(Y_test[:, i], Y_pred[:, i]) for i in range(Y_test.shape[1])] # Y_test/pred[:, i] corresponds to each property, Y_test.shape[1]=12 (tot num of properties)
 
 # Property names + u.m.
-property_names = [
-    'μ (D)',              # dipole moment
-    'α (a₀³)',            # isotropic polarizability
-    'ε_HOMO (Ha)',        # energy of HOMO
-    'ε_LUMO (Ha)',        # energy of LUMO
-    'ε_gap (Ha)',         # HOMO–LUMO gap
-    '⟨r²⟩ (a₀²)',          # electronic spatial extent
-    'zpve (Ha)',          # zero-point vibrational energy
-    'U₀ (Ha)',            # internal energy at 0 K
-    'U (Ha)',             # internal energy at 298.15 K
-    'H (Ha)',             # enthalpy at 298.15 K
-    'G (Ha)',             # free energy at 298.15 K
-    'Cᵥ (cal/mol·K)'      # heat capacity at 298.15 K
-]
+property_names = ['μ (D)', 'α (a₀³)', 'ε_HOMO (Ha)', 'ε_LUMO (Ha)', 'ε_gap (Ha)', '⟨r²⟩ (a₀²)', 'zpve (Ha)', 'U₀ (Ha)', 'U (Ha)', 'H (Ha)', 'G (Ha)', 'Cᵥ (cal/mol·K)']
 
 # ------------- Plot Section -------------
 plots_base_dir = "Plots"
 plots_dir = os.path.join(plots_base_dir, info, activation_function, subfolder)
 os.makedirs(plots_dir, exist_ok=True)
 
-# Plot training curves
-plot_training_curves(MSE_training_history, MSE_val_history, plots_dir)
-
-# Parity plot 4x3 grid for all the molecules
-plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
+plot_training_curves(MSE_training_history, MSE_val_history, plots_dir) # Plot training curves
+plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir) # Parity plot 4x3 grid for all the molecules
 
 # ---------------- Save experiment info and metrics -------------------------
 save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores, Y_test, Y_pred, Y_test_scaled, Y_pred_scaled, net, training_time)
