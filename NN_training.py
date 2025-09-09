@@ -9,15 +9,15 @@ import json
 import time
 from Utils import extract_history, save_experiment_info
 from sklearn.metrics import r2_score
-from Plot import plot_training_curves, plot_parity_plots
+from Plots import plot_training_curves, plot_parity_plots
 
 epochs = 2000
-patience = int(0.2 * epochs)    # 20 % of total epochs
+patience = int(0.05 * epochs)    # 20 % of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
 info = "FR"                     # "atom", "FG", "FR"
 
-hidden_layers = [54]                   # [h1, h2 ...] list of hidden layer sizes
-Load_model = True                     # whether to load a pre-trained model or train from scratch
+hidden_layers = [54]     # [h1, h2 ...] list of hidden layer sizes
+Load_model = False       # whether to load a pre-trained model or train from scratch
 
 # ------------ Path Management (model saving/loading) ---------------
 num_layers = len(hidden_layers)
@@ -32,11 +32,11 @@ model_path = os.path.join(model_dir, "model.keras")             # where the mode
 history_path = os.path.join(model_dir, "training_history.json") # where the training history is saved/loaded (JSON file)
 
 # ------------ Data Loading and Preprocessing ---------------
-X = np.load("X_features_filtered.npy") # Load preprocessed data
-Y_labels = np.load("Y_labels.npy")     # Load labels
+X = np.load("X_features_filtered.npy")   # Load preprocessed data
+Y_labels = np.load("Y_labels.npy")       # Load labels
 
 num_atoms = 5
-num_func_groups = 17  # after filtering, 17 functional groups remain
+num_func_groups = 20  # after filtering, 20 functional groups remain
 
 # input selection
 if info == "atom":   

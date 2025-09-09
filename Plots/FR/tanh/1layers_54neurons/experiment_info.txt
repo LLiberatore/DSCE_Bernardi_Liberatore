@@ -4,26 +4,26 @@ Info type: FR
 Activation function: tanh
 Hidden layers: [54]
 Epochs: 2000
-Patience: 400
+Patience: 100
 Training samples: 16000
 Test samples: 4000
-Total parameters: 5034
-Training time: 944.21 seconds
+Total parameters: 5250
+Training time: 282.36 seconds
 
 Performance Metrics
 ===================
-μ (D): R2 = 0.6053
-α (a₀³): R2 = 0.9633
-ε_HOMO (Ha): R2 = 0.7907
-ε_LUMO (Ha): R2 = 0.9347
-ε_gap (Ha): R2 = 0.9027
-⟨r²⟩ (a₀²): R2 = 0.7572
-zpve (Ha): R2 = 0.9982
-U₀ (Ha): R2 = 0.9990
-U (Ha): R2 = 0.9990
-H (Ha): R2 = 0.9990
-G (Ha): R2 = 0.9990
-Cᵥ (cal/mol·K): R2 = 0.9371
+μ (D): R2 = 0.6101
+α (a₀³): R2 = 0.9647
+ε_HOMO (Ha): R2 = 0.7667
+ε_LUMO (Ha): R2 = 0.9299
+ε_gap (Ha): R2 = 0.8990
+⟨r²⟩ (a₀²): R2 = 0.7468
+zpve (Ha): R2 = 0.9979
+U₀ (Ha): R2 = 0.9993
+U (Ha): R2 = 0.9993
+H (Ha): R2 = 0.9993
+G (Ha): R2 = 0.9993
+Cᵥ (cal/mol·K): R2 = 0.9378
 
-Test MSE (real scale, avg over properties): 1.240588e+03
-Test MSE (normalized scale, avg over properties): 7.556579e-04
+Test MSE (real scale, avg over properties): 1.293958e+03
+Test MSE (normalized scale, avg over properties): 7.786081e-04
