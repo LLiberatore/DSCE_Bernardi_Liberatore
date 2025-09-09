@@ -1,122 +1,67 @@
-==== GLOBAL SUMMARY OF ALL ARCHITECTURES ====
+==== GLOBAL EXPERIMENT SETTINGS ====
 
+Info type           : FR
+Activation function : relu
+Epochs              : 2
+Patience            : 0
+Training samples    : 16000
+Test samples        : 4000
+
+--------------------------------------------------
 Target parameters : 2500
 Actual parameters : 2500
 Num layers        : 1
 Hidden layers     : [27]
-R² mean ± std     : 0.9011 ± 0.0019
-MSE_test_scaled   : 8.054181e-04 ± 1.520889e-05
-Training time [s] : 402.27 ± 259.52
+
+R² per property (mean ± std)
+----------------------------
+μ (D)          : 0.4032 ± 0.0136
+α (a0^3)       : 0.7255 ± 0.0117
+ε_HOMO (Ha)    : 0.3922 ± 0.0623
+ε_LUMO (Ha)    : 0.7200 ± 0.0041
+ε_gap (Ha)     : 0.5761 ± 0.0014
+<r^2> (a0^2)   : 0.3347 ± 0.0153
+zpve (Ha)      : 0.8375 ± 0.0415
+U0 (Ha)        : 0.4112 ± 0.0628
+U (Ha)         : 0.3751 ± 0.0185
+H (Ha)         : 0.3655 ± 0.0512
+G (Ha)         : 0.4188 ± 0.0360
+Cv (cal/molK)  : 0.6664 ± 0.0731
+
+Global Metrics on Test Set
+==========================
+MSE (scaled, all properties)   = 0.004113 ± 0.000074
+MSE (original, all properties) = 3712.989502 ± 94.952393
+
+Average training time: 1.31s ± 0.00s
+--------------------------------------------------
+
 --------------------------------------------------
 Target parameters : 2500
 Actual parameters : 2500
 Num layers        : 2
 Hidden layers     : [22, 22]
-R² mean ± std     : 0.9040 ± 0.0024
-MSE_test_scaled   : 7.849382e-04 ± 1.889229e-05
-Training time [s] : 385.35 ± 188.03
+
+R² per property (mean ± std)
+----------------------------
+μ (D)          : 0.2439 ± 0.0465
+α (a0^3)       : 0.6690 ± 0.0039
+ε_HOMO (Ha)    : 0.3261 ± 0.0066
+ε_LUMO (Ha)    : 0.7052 ± 0.0195
+ε_gap (Ha)     : 0.5428 ± 0.0853
+<r^2> (a0^2)   : 0.2856 ± 0.0754
+zpve (Ha)      : 0.8016 ± 0.0314
+U0 (Ha)        : 0.3672 ± 0.0189
+U (Ha)         : 0.3850 ± 0.0447
+H (Ha)         : 0.3877 ± 0.0018
+G (Ha)         : 0.3652 ± 0.0367
+Cv (cal/molK)  : 0.5735 ± 0.0005
+
+Global Metrics on Test Set
+==========================
+MSE (scaled, all properties)   = 0.004543 ± 0.000093
+MSE (original, all properties) = 3972.648438 ± 376.817383
+
+Average training time: 1.65s ± 0.07s
 --------------------------------------------------
-Target parameters : 2500
-Actual parameters : 2500
-Num layers        : 3
-Hidden layers     : [19, 19, 19]
-R² mean ± std     : 0.9043 ± 0.0033
-MSE_test_scaled   : 7.829103e-04 ± 2.793986e-05
-Training time [s] : 357.08 ± 95.61
---------------------------------------------------
-Target parameters : 5000
-Actual parameters : 5000
-Num layers        : 1
-Hidden layers     : [54]
-R² mean ± std     : 0.9051 ± 0.0012
-MSE_test_scaled   : 7.754036e-04 ± 1.091091e-05
-Training time [s] : 237.52 ± 57.28
---------------------------------------------------
-Target parameters : 5000
-Actual parameters : 5000
-Num layers        : 2
-Hidden layers     : [38, 38]
-R² mean ± std     : 0.9054 ± 0.0014
-MSE_test_scaled   : 7.755988e-04 ± 1.348252e-05
-Training time [s] : 246.54 ± 79.21
---------------------------------------------------
-Target parameters : 5000
-Actual parameters : 5000
-Num layers        : 3
-Hidden layers     : [32, 32, 32]
-R² mean ± std     : 0.9046 ± 0.0017
-MSE_test_scaled   : 7.823232e-04 ± 1.307069e-05
-Training time [s] : 189.67 ± 28.92
---------------------------------------------------
-Target parameters : 7500
-Actual parameters : 7500
-Num layers        : 1
-Hidden layers     : [81]
-R² mean ± std     : 0.9042 ± 0.0014
-MSE_test_scaled   : 7.832704e-04 ± 1.162046e-05
-Training time [s] : 192.60 ± 30.86
---------------------------------------------------
-Target parameters : 7500
-Actual parameters : 7500
-Num layers        : 2
-Hidden layers     : [51, 51]
-R² mean ± std     : 0.9040 ± 0.0032
-MSE_test_scaled   : 7.854701e-04 ± 2.540964e-05
-Training time [s] : 139.24 ± 14.08
---------------------------------------------------
-Target parameters : 7500
-Actual parameters : 7500
-Num layers        : 3
-Hidden layers     : [42, 42, 42]
-R² mean ± std     : 0.9012 ± 0.0042
-MSE_test_scaled   : 8.082396e-04 ± 3.588594e-05
-Training time [s] : 172.75 ± 73.86
---------------------------------------------------
-Target parameters : 10000
-Actual parameters : 10000
-Num layers        : 1
-Hidden layers     : [107]
-R² mean ± std     : 0.9026 ± 0.0011
-MSE_test_scaled   : 7.956551e-04 ± 9.605074e-06
-Training time [s] : 186.78 ± 49.18
---------------------------------------------------
-Target parameters : 10000
-Actual parameters : 10000
-Num layers        : 2
-Hidden layers     : [63, 63]
-R² mean ± std     : 0.9031 ± 0.0028
-MSE_test_scaled   : 7.937457e-04 ± 2.314039e-05
-Training time [s] : 155.59 ± 58.37
---------------------------------------------------
-Target parameters : 10000
-Actual parameters : 10000
-Num layers        : 3
-Hidden layers     : [51, 51, 51]
-R² mean ± std     : 0.9017 ± 0.0020
-MSE_test_scaled   : 8.046812e-04 ± 1.844662e-05
-Training time [s] : 159.18 ± 37.13
---------------------------------------------------
-Target parameters : 12500
-Actual parameters : 12500
-Num layers        : 1
-Hidden layers     : [134]
-R² mean ± std     : 0.9015 ± 0.0016
-MSE_test_scaled   : 8.052519e-04 ± 1.442249e-05
-Training time [s] : 143.17 ± 25.42
---------------------------------------------------
-Target parameters : 12500
-Actual parameters : 12500
-Num layers        : 2
-Hidden layers     : [74, 74]
-R² mean ± std     : 0.9022 ± 0.0016
-MSE_test_scaled   : 8.013082e-04 ± 1.434560e-05
-Training time [s] : 127.30 ± 36.34
---------------------------------------------------
-Target parameters : 12500
-Actual parameters : 12500
-Num layers        : 3
-Hidden layers     : [59, 59, 59]
-R² mean ± std     : 0.9006 ± 0.0009
-MSE_test_scaled   : 8.159066e-04 ± 1.032858e-05
-Training time [s] : 103.00 ± 6.68
---------------------------------------------------
+
