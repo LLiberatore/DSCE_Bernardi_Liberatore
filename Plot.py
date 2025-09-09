@@ -3,6 +3,8 @@ from Utils import save_plot
 from rdkit.Chem import Draw
 from rdkit import Chem
 import os
+import seaborn as sns
+import pandas as pd
 
 def plot_frequency(freq_values, label, saving_name, x_labels=None):
     save_dir = os.path.join("Plots", "Dataset_visualization")
@@ -67,8 +69,6 @@ def plot_functional_groups(fparams, fids, freq_func_groups=None, sort_by_freq=Fa
     img.save(save_path + ".pdf")
     print(f"Saved: {save_path}.png and {save_path}.pdf")
 
-import matplotlib.pyplot as plt
-import os
 
 def plot_training_curves(MSE_training_history, MSE_val_history, plots_dir):
     plt.figure(figsize=(8, 5))
@@ -76,6 +76,7 @@ def plot_training_curves(MSE_training_history, MSE_val_history, plots_dir):
     plt.plot(MSE_val_history, label='Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('MSE')
+    plt.yscale("log")
     plt.title('Training and Validation Loss')
     plt.legend()
     # Save plots
@@ -109,3 +110,23 @@ def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
     plt.savefig(parity_pdf, format="pdf")
     plt.show()
     print(f"[INFO] Parity plots saved in {plots_dir}")
+    
+    
+def plot_correlation_heatmap(Y_labels, property_names):
+
+    save_dir = os.path.join("Plots", "Dataset_visualization")
+
+    # Convert labels into a DataFrame and compute Pearson correlation matrix
+    labels_df = pd.DataFrame(Y_labels, columns=property_names)
+    corr = labels_df.corr()
+
+    # Create the heatmap plot (single-color gradient)
+    fig, ax = plt.subplots(figsize=(10,8))
+    sns.heatmap(corr, annot=True, cmap="Blues", fmt=".2f", cbar=True,
+                xticklabels=property_names, yticklabels=property_names, ax=ax)
+    ax.set_title("Correlation heatmap of molecular properties")
+    fig.tight_layout()
+
+    # Save the figure in both PNG and PDF format
+    save_plot(fig, "correlation_heatmap", save_dir)
+    plt.close(fig)

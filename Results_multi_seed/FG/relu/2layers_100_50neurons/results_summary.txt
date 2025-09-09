@@ -1,0 +1,32 @@
+Experiment Information
+======================
+Info type: FG
+Activation function: relu
+Hidden layers: [100, 50]
+Epochs: 2000
+Patience: 100
+Training samples: 16000
+Test samples: 4000
+Total parameters: 8462
+
+Average Metrics (± std)
+=======================
+μ (D)          : R2 = 0.5527 ± 0.0170, MSE (scaled) = 0.003648 ± 0.000139, MSE (original) = 0.998090 ± 0.037971
+α (a₀³)        : R2 = 0.9560 ± 0.0016, MSE (scaled) = 0.000224 ± 0.000008, MSE (original) = 2.864623 ± 0.102433
+ε_HOMO (Ha)    : R2 = 0.7324 ± 0.0060, MSE (scaled) = 0.001727 ± 0.000039, MSE (original) = 0.000138 ± 0.000003
+ε_LUMO (Ha)    : R2 = 0.8088 ± 0.0040, MSE (scaled) = 0.003071 ± 0.000063, MSE (original) = 0.000417 ± 0.000009
+ε_gap (Ha)     : R2 = 0.7518 ± 0.0033, MSE (scaled) = 0.001862 ± 0.000025, MSE (original) = 0.000546 ± 0.000007
+⟨r²⟩ (a₀²)     : R2 = 0.7339 ± 0.0040, MSE (scaled) = 0.001866 ± 0.000028, MSE (original) = 16307.070490 ± 243.003661
+zpve (Ha)      : R2 = 0.9961 ± 0.0015, MSE (scaled) = 0.000071 ± 0.000027, MSE (original) = 0.000004 ± 0.000001
+U₀ (Ha)        : R2 = 0.9978 ± 0.0008, MSE (scaled) = 0.000018 ± 0.000007, MSE (original) = 3.475481 ± 1.301540
+U (Ha)         : R2 = 0.9977 ± 0.0009, MSE (scaled) = 0.000019 ± 0.000008, MSE (original) = 3.590521 ± 1.430901
+H (Ha)         : R2 = 0.9978 ± 0.0008, MSE (scaled) = 0.000018 ± 0.000006, MSE (original) = 3.438337 ± 1.176395
+G (Ha)         : R2 = 0.9977 ± 0.0008, MSE (scaled) = 0.000019 ± 0.000006, MSE (original) = 3.520595 ± 1.172953
+Cᵥ (cal/mol·K) : R2 = 0.9329 ± 0.0015, MSE (scaled) = 0.000816 ± 0.000018, MSE (original) = 1.063866 ± 0.023066
+
+Global Metrics on Test Set
+==========================
+MSE (scaled, all properties)   = 0.001113 ± 0.000011
+MSE (original, all properties) = 1360.501409 ± 20.268400
+
+Average training time: 218.35s ± 58.10s

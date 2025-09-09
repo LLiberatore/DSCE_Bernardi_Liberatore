@@ -4,29 +4,29 @@ Info type: FR
 Activation function: tanh
 Hidden layers: [100, 50]
 Epochs: 2000
-Patience: 20
+Patience: 100
 Training samples: 16000
 Test samples: 4000
 Total parameters: 13762
 
 Average Metrics (± std)
 =======================
-μ (D)          : R² = 0.6041 ± 0.0163, MSE (scaled) = 0.003229 ± 0.000133, MSE (original) = 0.883337 ± 0.036287
-α (a₀³)        : R² = 0.9647 ± 0.0057, MSE (scaled) = 0.000179 ± 0.000029, MSE (original) = 2.296319 ± 0.373889
-ε_HOMO (Ha)    : R² = 0.7905 ± 0.0097, MSE (scaled) = 0.001352 ± 0.000063, MSE (original) = 0.000108 ± 0.000005
-ε_LUMO (Ha)    : R² = 0.9346 ± 0.0025, MSE (scaled) = 0.001050 ± 0.000040, MSE (original) = 0.000143 ± 0.000005
-ε_gap (Ha)     : R² = 0.9009 ± 0.0037, MSE (scaled) = 0.000744 ± 0.000028, MSE (original) = 0.000218 ± 0.000008
-⟨r²⟩ (a₀²)     : R² = 0.7708 ± 0.0062, MSE (scaled) = 0.001607 ± 0.000044, MSE (original) = 14044.727894 ± 381.265854
-zpve (Ha)      : R² = 0.9956 ± 0.0012, MSE (scaled) = 0.000079 ± 0.000021, MSE (original) = 0.000004 ± 0.000001
-U₀ (Ha)        : R² = 0.9961 ± 0.0013, MSE (scaled) = 0.000032 ± 0.000011, MSE (original) = 6.054854 ± 2.075195
-U (Ha)         : R² = 0.9961 ± 0.0013, MSE (scaled) = 0.000032 ± 0.000010, MSE (original) = 6.046637 ± 1.991150
-H (Ha)         : R² = 0.9961 ± 0.0012, MSE (scaled) = 0.000032 ± 0.000010, MSE (original) = 6.000752 ± 1.924874
-G (Ha)         : R² = 0.9961 ± 0.0013, MSE (scaled) = 0.000032 ± 0.000010, MSE (original) = 6.021002 ± 1.957390
-Cᵥ (cal/mol·K) : R² = 0.9378 ± 0.0018, MSE (scaled) = 0.000757 ± 0.000022, MSE (original) = 0.986224 ± 0.029148
+μ (D)          : R2 = 0.6032 ± 0.0152, MSE (scaled) = 0.003236 ± 0.000124, MSE (original) = 0.885217 ± 0.033966
+α (a₀³)        : R2 = 0.9655 ± 0.0032, MSE (scaled) = 0.000176 ± 0.000016, MSE (original) = 2.245457 ± 0.208631
+ε_HOMO (Ha)    : R2 = 0.7906 ± 0.0118, MSE (scaled) = 0.001351 ± 0.000076, MSE (original) = 0.000108 ± 0.000006
+ε_LUMO (Ha)    : R2 = 0.9349 ± 0.0022, MSE (scaled) = 0.001045 ± 0.000036, MSE (original) = 0.000142 ± 0.000005
+ε_gap (Ha)     : R2 = 0.9020 ± 0.0024, MSE (scaled) = 0.000735 ± 0.000018, MSE (original) = 0.000216 ± 0.000005
+⟨r²⟩ (a₀²)     : R2 = 0.7726 ± 0.0066, MSE (scaled) = 0.001594 ± 0.000046, MSE (original) = 13933.031783 ± 404.007953
+zpve (Ha)      : R2 = 0.9956 ± 0.0010, MSE (scaled) = 0.000080 ± 0.000019, MSE (original) = 0.000004 ± 0.000001
+U₀ (Ha)        : R2 = 0.9965 ± 0.0007, MSE (scaled) = 0.000028 ± 0.000005, MSE (original) = 5.397323 ± 1.025772
+U (Ha)         : R2 = 0.9965 ± 0.0007, MSE (scaled) = 0.000029 ± 0.000005, MSE (original) = 5.408770 ± 1.033258
+H (Ha)         : R2 = 0.9965 ± 0.0007, MSE (scaled) = 0.000028 ± 0.000006, MSE (original) = 5.392420 ± 1.045963
+G (Ha)         : R2 = 0.9965 ± 0.0007, MSE (scaled) = 0.000028 ± 0.000006, MSE (original) = 5.400231 ± 1.048332
+Cᵥ (cal/mol·K) : R2 = 0.9376 ± 0.0021, MSE (scaled) = 0.000759 ± 0.000025, MSE (original) = 0.988829 ± 0.032827
 
 Global Metrics on Test Set
 ==========================
-MSE (scaled, all properties)   = 0.000760 ± 0.000015
-MSE (original, all properties) = 1172.751343 ± 31.709585
+MSE (scaled, all properties)   = 0.000758 ± 0.000012
+MSE (original, all properties) = 1163.229093 ± 33.830773
 
-Average training time: 129.25s ± 35.26s
+Average training time: 231.29s ± 69.17s

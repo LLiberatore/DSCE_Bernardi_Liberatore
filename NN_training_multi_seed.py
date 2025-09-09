@@ -10,11 +10,11 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 # ============== Parameters ==============
 epochs = 2000
-patience = int(0.01 * epochs)
+patience = int(0.05 * epochs)
 activation_function = "tanh"
-info = "FR"                                   # "atom", "FG", "FR"
-hidden_layers = [100, 50]
-seeds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]    # multiple runs for averaging
+info = "atom"                                   # "atom", "FG", "FR"
+hidden_layers = [50]
+seeds = [1, 2, 3] #, 4, 5, 6, 7, 8, 9, 10]    # multiple runs for averaging
 
 # ============== Path Management ==============
 num_layers = len(hidden_layers)

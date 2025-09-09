@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Utils import build_fragment_catalog, atom_count_from_smiles, count_functional_groups,  binary_fingerprint_from_smiles, save_plot
-from Plot import plot_frequency, plot_functional_groups
+from Plot import plot_frequency, plot_functional_groups, plot_correlation_heatmap
 
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
@@ -83,14 +83,16 @@ FG_labels = [f"#{i+1}" for i in range(num_func_groups)] # Labels for all functio
 FG_labels_filtered = [f"#{i+1}" for i in keep_func_ids] # Labels for functional groups that remain after filtering
 
 # Unfiltered plots
-plot_frequency(freq_func_groups, "Functional Group", "FG bar plot (not filtered)", x_labels=FG_labels)   # Plot functional groups before filtering
-plot_frequency(freq_fragments, "Fragment", "Fragment bar plot (not filtered)", x_labels=None)      # Plot fragments before filtering
-# Filtered plots
-plot_frequency(X_func_groups[:, keep_func_ids].sum(axis=0), "Functional Group (filtered)", "FG bar plot (filtered)", x_labels=FG_labels_filtered)   # Plot functional groups after filtering
-plot_frequency(X_fragments[:, keep_frag_ids].sum(axis=0), "Fragment (filtered)", "Fragment bar plot (filtered)", x_labels=None)      # Plot fragments after filtering
+#plot_frequency(freq_func_groups, "Functional Group", "FG bar plot (not filtered)", x_labels=FG_labels)   # Plot functional groups before filtering
+#plot_frequency(freq_fragments, "Fragment", "Fragment bar plot (not filtered)", x_labels=None)      # Plot fragments before filtering
+## Filtered plots
+#plot_frequency(X_func_groups[:, keep_func_ids].sum(axis=0), "Functional Group (filtered)", "FG bar plot (filtered)", x_labels=FG_labels_filtered)   # Plot functional groups after filtering
+#plot_frequency(X_fragments[:, keep_frag_ids].sum(axis=0), "Fragment (filtered)", "Fragment bar plot (filtered)", x_labels=None)      # Plot fragments after filtering
+#
+## Plot all functional groups
+#plot_functional_groups(fparams,list(range(fparams.GetNumFuncGroups())),save_path=os.path.join("Plots", "Dataset_visualization", "functional_groups_all"))
+#
+## Plot only filtered functional groups, sorted by frequency
+#plot_functional_groups(fparams, keep_func_ids, freq_func_groups=freq_func_groups, sort_by_freq=True, save_path=os.path.join("Plots", "Dataset_visualization", "functional_groups_filtered"))
 
-# Plot all functional groups
-plot_functional_groups(fparams,list(range(fparams.GetNumFuncGroups())),save_path=os.path.join("Plots", "Dataset_visualization", "functional_groups_all"))
-
-# Plot only filtered functional groups, sorted by frequency
-plot_functional_groups(fparams, keep_func_ids, freq_func_groups=freq_func_groups, sort_by_freq=True, save_path=os.path.join("Plots", "Dataset_visualization", "functional_groups_filtered"))
+plot_correlation_heatmap(Y_labels, target_cols)

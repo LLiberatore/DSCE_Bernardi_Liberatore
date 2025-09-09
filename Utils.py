@@ -82,8 +82,7 @@ def save_plot(fig, filename_base, save_dir):
     fig.savefig(os.path.join(save_dir, filename_base + ".png"))
     fig.savefig(os.path.join(save_dir, filename_base + ".pdf"))
 
-def save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience,X_train, X_test, property_names, r2_scores, Y_test, Y_pred, net, training_time):
-
+def save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores,Y_test, Y_pred, Y_test_scaled, Y_pred_scaled,net, training_time):
     info_file = os.path.join(plots_dir, "experiment_info.txt")
     with open(info_file, "w", encoding="utf-8") as f:   
         f.write("Experiment Information\n")
@@ -104,7 +103,10 @@ def save_experiment_info(plots_dir, info, activation_function, hidden_layers, ep
             f.write(f"{name}: R2 = {r2:.4f}\n")
         
         mse_test = np.mean((Y_test - Y_pred) ** 2)
-        f.write(f"\nTest MSE (average over all properties): {mse_test:.6e}\n")
+        mse_test_scaled = np.mean((Y_test_scaled - Y_pred_scaled) ** 2) # with scaled data
+
+        f.write(f"\nTest MSE (real scale, avg over properties): {mse_test:.6e}\n")
+        f.write(f"Test MSE (normalized scale, avg over properties): {mse_test_scaled:.6e}\n")
 
     print(f"[INFO] Experiment details saved to {info_file}")
 
@@ -113,5 +115,7 @@ def save_experiment_info(plots_dir, info, activation_function, hidden_layers, ep
     print(f"Total parameters: {net.count_params()}")
     print(f"Training time: {training_time:.2f} seconds")
     for name, r2 in zip(property_names, r2_scores):
-        print(f"{name}: R² = {r2:.4f}")
-    print(f"Test MSE (average): {mse_test:.6e}")
+        print(f"{name}: R2 = {r2:.4f}")
+    print(f"Test MSE (real scale): {mse_test:.6e}")
+    print(f"Test MSE (normalized scale): {mse_test_scaled:.6e}")
+

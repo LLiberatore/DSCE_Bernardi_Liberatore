@@ -12,11 +12,11 @@ from sklearn.metrics import r2_score
 from Plot import plot_training_curves, plot_parity_plots
 
 epochs = 2000
-patience = int(0.05 * epochs)   # 5% of total epochs
+patience = int(0.2 * epochs)   # 5% of total epochs
 activation_function = "tanh"    # "relu", "selu", "tanh"
-info = "FG"                     # "atom", "FG", "FR"
+info = "FR"                     # "atom", "FG", "FR"
 
-hidden_layers = [20, 10]
+hidden_layers = [54]
 Load_model = False
 model_path = "trained_model.keras"
 history_path = "training_history.json"
@@ -39,7 +39,7 @@ X = np.load("X_features_filtered.npy")
 Y_labels = np.load("Y_labels.npy")
 
 num_atoms = 5
-num_func_groups = 22  # after filtering, 22 functional groups remain
+num_func_groups = 17  # after filtering, 22 functional groups remain
 
 if info == "atom":
     X = X[:, :num_atoms]
@@ -61,6 +61,7 @@ X_test_scaled = scaler_X.transform(X_test)
 # Scale outputs (trainin only)
 scaler_Y = MinMaxScaler()
 Y_train_scaled = scaler_Y.fit_transform(Y_train)
+Y_test_scaled = scaler_Y.transform(Y_test)   
 
 # ------------ Model Definition, Training, and Evaluation ---------------
 if Load_model and os.path.exists(model_path):
@@ -139,4 +140,4 @@ plot_training_curves(MSE_training_history, MSE_val_history, plots_dir)
 plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
 
 # ---------------- Save experiment info and metrics -------------------------
-save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores, Y_test, Y_pred, net, training_time)
+save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores, Y_test, Y_pred, Y_test_scaled, Y_pred_scaled, net, training_time)

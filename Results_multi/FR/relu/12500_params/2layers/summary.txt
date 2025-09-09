@@ -1,0 +1,15 @@
+{
+    "TargetParams": 12500,
+    "NumLayers": 2,
+    "HiddenLayers": [
+        74,
+        74
+    ],
+    "ParamsActual": 12500,
+    "R2_mean": 0.9021944115559262,
+    "R2_std": 0.0016480994931151924,
+    "MSE_scaled_mean": 0.0008013081969693303,
+    "MSE_scaled_std": 1.4345604540721979e-05,
+    "Time_mean": 127.3045702457428,
+    "Time_std": 36.34026359489804
+}
