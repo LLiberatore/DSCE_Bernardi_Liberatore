@@ -1,0 +1,7 @@
+Random Forest Results Summary
+============================
+
+n_estimators = 100
+  R2_global      = 0.8348
+  Training time  = 3.38 s
+----------------------------

@@ -1,72 +1,102 @@
-# Random Forest Regression on Molecular Properties + Parity Plots
-
+# Random Forest Regression on Molecular Properties (parametric on n_estimators, one RF per property)
 import os
 import numpy as np
-import matplotlib.pyplot as plt
-from timeit import default_timer as timer
+import time
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import r2_score
+from Plots import plot_parity_plots, plot_rf_r2_vs_time
 
-start = timer()
-
-# Dataset loading
-X = np.load('X_features.npy')
-Y_labels = np.load('Y_labels.npy')  
-
-# Split train/test
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, random_state=0)
-
-# Random Forest
-n_estimators = 100  # Number of tress in the forest
-model = RandomForestRegressor(n_estimators=n_estimators, random_state=0, n_jobs=-1)
-model.fit(X_train, Y_train)
-Y_pred = model.predict(X_test)
-
-# Metrics
-# mse = mean_squared_error(Y_test, Y_pred)
-# mae = mean_absolute_error(Y_test, Y_pred)
-# r2 = r2_score(Y_test, Y_pred)
-
-end = timer()
-
-# print(f"MSE: {mse:.4f}")
-# print(f"MAE: {mae:.4f}")
-# print(f"R2 score: {r2:.4f}")
-print(f"Time of esecution: {end - start:.2f} seconds")
-
-# Parity Plots
-property_names = [
-    'μ (D)',              # dipole moment
-    'α (a₀³)',            # isotropic polarizability
-    'ε_HOMO (Ha)',        # energy of HOMO
-    'ε_LUMO (Ha)',        # energy of LUMO
-    'ε_gap (Ha)',         # HOMO–LUMO gap
-    '⟨r²⟩ (a₀²)',         # electronic spatial extent
-    'zpve (Ha)',          # zero-point vibrational energy
-    'U₀ (Ha)',            # internal energy at 0 K
-    'U (Ha)',             # internal energy at 298.15 K
-    'H (Ha)',             # enthalpy at 298.15 K
-    'G (Ha)',             # free energy at 298.15 K
-    'Cᵥ (cal/mol·K)'      # heat capacity at 298.15 K
-]
+import matplotlib.pyplot as plt
 
 
-# Plots
-fig, axes = plt.subplots(3, 4, figsize=(18, 11))
-fig.suptitle(f'Parity Plots for Test Molecules n_estimators = {n_estimators}', fontsize=18)
+# Configuration 
+info = "FG"                # "atom", "FG", "FR"
+n_estimators_list = [100]
 
-for i, ax in enumerate(axes.ravel()):
-    ax.scatter(Y_test[:, i], Y_pred[:, i], alpha=0.4,
-               edgecolor='k', linewidth=0.3, s=20)
-    ax.plot([Y_test[:, i].min(), Y_test[:, i].max()],
-            [Y_test[:, i].min(), Y_test[:, i].max()],
-            'r--', linewidth=1.2)
-    ax.set_title(property_names[i], fontsize=13)
-    ax.set_xlabel('True', fontsize=10)
-    ax.set_ylabel('Predicted', fontsize=10)
-    ax.tick_params(axis='both', labelsize=9)
-    ax.grid(True)
+# Path Management
+plots_base_dir = "Plots_RF"
+os.makedirs(plots_base_dir, exist_ok=True)
 
-plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.show()
+# Data Loading
+X = np.load("X_features_filtered.npy")
+Y_labels = np.load("Y_labels.npy")
+
+num_atoms = 5
+num_func_groups = 20  # after filtering, 20 functional groups remain
+
+# input selection
+if info == "atom":   
+    X = X[:, :num_atoms]                   # Select atomic features
+elif info == "FG":
+    X = X[:, :num_atoms + num_func_groups] # Select atomic and functional group features
+elif info == "FR":
+    X = X                                  # Select all features
+else:
+    raise ValueError("info must be 'atom', 'FG', or 'FR'")
+
+# Train/test split
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y_labels, test_size=0.2, random_state=42
+)
+
+property_names = ['μ (D)', 'α (a₀³)', 'ε_HOMO (Ha)', 'ε_LUMO (Ha)', 'ε_gap (Ha)', '⟨r²⟩ (a₀²)', 'zpve (Ha)', 'U₀ (Ha)', 'U (Ha)', 'H (Ha)', 'G (Ha)', 'Cᵥ (cal/mol·K)']
+
+# Loop over n_estimators 
+results = []
+
+for n_estimators in n_estimators_list:
+    print(f"\n[INFO] Training Random Forest with n_estimators = {n_estimators}")
+
+    subfolder = f"n_estimators_{n_estimators}"
+    plots_dir = os.path.join(plots_base_dir, info, subfolder)
+    os.makedirs(plots_dir, exist_ok=True)
+
+    # Model Training
+    start_time = time.time()
+    Y_pred = np.zeros_like(Y_test)  # predictions container
+    r2_scores = []
+
+    for i in range(Y_labels.shape[1]):  # loop over properties
+        model = RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1)
+        model.fit(X_train, Y_train[:, i])  # train only on column i
+        Y_pred[:, i] = model.predict(X_test)
+        r2 = r2_score(Y_test[:, i], Y_pred[:, i])
+        r2_scores.append(r2)
+
+    training_time = time.time() - start_time
+
+    # Global R² on test set (macro-average over all outputs)
+    r2_global = r2_score(Y_test, Y_pred, multioutput='uniform_average')
+
+    # Plotting
+    plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
+
+    # Save results
+    results.append({
+        "n_estimators": n_estimators,
+        "R2_global": r2_global,
+        "Training_time": training_time
+    })
+
+# Save summary
+summary_file = os.path.join(plots_base_dir, info, "results_summary.txt")
+with open(summary_file, "w", encoding="utf-8") as f:
+    f.write("Random Forest Results Summary\n")
+    f.write("============================\n\n")
+    for res in results:
+        f.write(f"n_estimators = {res['n_estimators']}\n")
+        f.write(f"  R2_global      = {res['R2_global']:.4f}\n")
+        f.write(f"  Training time  = {res['Training_time']:.2f} s\n")
+        f.write("----------------------------\n")
+
+print(f"\n[INFO] Summary saved to {summary_file}")
+
+# PLot
+n_estimators = [res["n_estimators"] for res in results]
+R2_global = [res["R2_global"] for res in results]
+Training_time = [res["Training_time"] for res in results]
+
+# Call new plotting function
+plots_dir = os.path.join(plots_base_dir, info)
+plot_rf_r2_vs_time(n_estimators, R2_global, Training_time, plots_dir)

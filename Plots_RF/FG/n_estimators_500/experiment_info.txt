@@ -1,0 +1,9 @@
+Experiment Information
+======================
+Info type: FG
+Activation function: RF_500
+Hidden layers: []
+Epochs: 0
+Patience: 0
+Training samples: 16000
+Test samples: 4000

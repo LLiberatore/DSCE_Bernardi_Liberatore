@@ -29,7 +29,7 @@ X = np.load("X_features_filtered.npy")
 Y_labels = np.load("Y_labels.npy")
 
 num_atoms = 5
-num_func_groups = 17  # after filtering
+num_func_groups = 20  # after filtering
 
 # input selection
 if info == "atom":   

@@ -126,3 +126,39 @@ def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
     print(f"[INFO] Parity plots saved in {plots_dir}")
     
     
+    # ------------------------------ RandomForest.py plots ----------------------------------
+    
+def plot_rf_r2_vs_time(n_estimators, R2_global, Training_time, plots_dir):
+   
+    fig, ax1 = plt.subplots(figsize=(8, 6))
+
+    # --- Left Y-axis: Global R² ---
+    color = 'tab:blue'
+    ax1.set_xscale("log")  # logarithmic scale for x-axis
+    ax1.plot(n_estimators, R2_global, '-o', color=color, linewidth=2, markersize=8, label="R² global")
+    ax1.set_xlabel("n_estimators", fontsize=14)
+    ax1.set_ylabel("R² global", color=color, fontsize=14)
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.set_ylim(0.8, 0.9)  # fix y-limits for clarity
+    ax1.grid(True, which="both", linestyle="--", linewidth=0.6)
+
+    # --- Right Y-axis: Training Time ---
+    ax2 = ax1.twinx()  # create a second y-axis
+    color = 'tab:red'
+    ax2.plot(n_estimators, Training_time, '-s', color=color, linewidth=2, markersize=8, label="Training time [s]")
+    ax2.set_ylabel("Training Time [s]", color=color, fontsize=14)
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    # --- Title and Combined Legend ---
+
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines + lines2, labels + labels2, loc="upper left")
+
+    # Save and show
+    plt.tight_layout()
+    save_plot(fig, "rf_r2_vs_time", plots_dir)
+    plt.show()
+    print(f"[INFO] RF R2 vs Training time plot saved in {plots_dir}")
+
+    
