@@ -12,6 +12,7 @@ from Plots import plot_frequency, plot_functional_groups, plot_correlation_heatm
 # Load dataset 
 df = pd.read_pickle("qm9_preprocessed.pkl")
 df = df.head(20000)                          # select only 20k molecules for faster testing 
+
 smiles_list = df['smiles'].tolist()          # to transform a dataframe column in a python list
 
 # Build fragment catalog 
@@ -101,3 +102,4 @@ plot_functional_groups(fparams,list(range(fparams.GetNumFuncGroups())), save_pat
 plot_functional_groups(fparams, keep_func_ids, freq_func_groups=freq_func_groups, sort_by_freq=True, save_path=os.path.join(dataset_visualization_dir, "functional_groups_filtered"))
 
 plot_correlation_heatmap(Y_labels, target_cols, save_dir = dataset_visualization_dir) # Plot correlation heatmap of the target properties
+

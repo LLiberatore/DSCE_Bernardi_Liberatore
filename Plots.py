@@ -126,7 +126,7 @@ def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
     print(f"[INFO] Parity plots saved in {plots_dir}")
     
     
-    # ------------------------------ RandomForest.py plots ----------------------------------
+# ------------------------------ RandomForest.py plots ----------------------------------
     
 def plot_rf_r2_vs_time(n_estimators, R2_global, Training_time, plots_dir):
    
@@ -162,3 +162,31 @@ def plot_rf_r2_vs_time(n_estimators, R2_global, Training_time, plots_dir):
     print(f"[INFO] RF R2 vs Training time plot saved in {plots_dir}")
 
     
+# -------------------- Regression Plots -------------------
+
+def plot_coefficients_grid(coef, property_names, model_choice, plots_dir, alpha=None):
+ 
+    fig, axes = plt.subplots(4, 3, figsize=(18, 14))
+
+    # One subplot per property
+    for i, ax in enumerate(axes.ravel()):
+        if i < coef.shape[0]:
+            ax.bar(range(coef.shape[1]), coef[i])
+            ax.set_title(property_names[i], fontsize=12)
+            ax.set_xlabel("Variable index", fontsize=9)
+            ax.set_ylabel("Coefficient value (scaled)", fontsize=9)
+            ax.tick_params(axis='both', labelsize=8)
+            ax.grid(True, linestyle="--", linewidth=0.5)
+
+    # Layout + save
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    coef_plot_png = os.path.join(plots_dir, f"coefficients_grid_{model_choice}.png")
+    coef_plot_pdf = os.path.join(plots_dir, f"coefficients_grid_{model_choice}.pdf")
+
+    plt.savefig(coef_plot_png, dpi=300)
+    plt.savefig(coef_plot_pdf)
+
+    plt.show()
+    plt.close(fig)
+
+    print(f"[INFO] Coefficient grid plot saved in {coef_plot_png} and {coef_plot_pdf}")

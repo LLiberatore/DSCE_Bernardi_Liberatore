@@ -1,125 +1,116 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
+from timeit import default_timer as timer
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
-import pandas as pd
-import os
-import json
-import time
-from Utils import extract_history, save_experiment_info
-from sklearn.metrics import r2_score
-from Plots import plot_training_curves, plot_parity_plots
+from Plots import plot_parity_plots   # usa la stessa funzione già definita in Plots.py
+from Utils import save_experiment_info
 
-epochs = 2000
-patience = int(0.05 * epochs)    # 20 % of total epochs
-activation_function = "tanh"    # "relu", "selu", "tanh"
-info = "FR"                     # "atom", "FG", "FR"
+# ================= Configuration =================
+info = "FR"   # "atom", "FG", "FR"
+model_choice = "ridge"   # "linear", "ridge", "lasso"
 
-hidden_layers = [54]     # [h1, h2 ...] list of hidden layer sizes
-Load_model = False       # whether to load a pre-trained model or train from scratch
-
-# ------------ Path Management (model saving/loading) ---------------
-num_layers = len(hidden_layers)
-num_neurons = "_".join(map(str, hidden_layers))         # create a descriptive string from the list of hidden layers hidden_layers --> ex. [h1, h2, h3] -> "h1_h2_h3"
-subfolder = f"{num_layers}layers_{num_neurons}neurons"  # ex. "3layers_50_50_50neurons" (name of the subfolder to save plots and model)
-
+# ================= Path Management =================
 base_dir = "saved_models"
-model_dir = os.path.join(base_dir, info, activation_function, subfolder)
+model_dir = os.path.join(base_dir, "ML", info, model_choice)
 os.makedirs(model_dir, exist_ok=True)
 
-model_path = os.path.join(model_dir, "model.keras")             # where the model is saved/loaded
-history_path = os.path.join(model_dir, "training_history.json") # where the training history is saved/loaded (JSON file)
-
-# ------------ Data Loading and Preprocessing ---------------
-X = np.load("X_features_filtered.npy")   # Load preprocessed data
-Y_labels = np.load("Y_labels.npy")       # Load labels
+# ================= Data Loading =================
+X = np.load("X_features_filtered.npy")
+Y_labels = np.load("Y_labels.npy")
 
 num_atoms = 5
-num_func_groups = 20  # after filtering, 20 functional groups remain
-
+num_func_groups = 20  # dopo filtraggio
 # input selection
-if info == "atom":   
-    X = X[:, :num_atoms]                   # Select atomic features
+if info == "atom":
+    X = X[:, :num_atoms]
 elif info == "FG":
-    X = X[:, :num_atoms + num_func_groups] # Select atomic and functional group features
+    X = X[:, :num_atoms + num_func_groups]
 elif info == "FR":
-    X = X                                  # Select all features
+    X = X
 else:
     raise ValueError("info must be 'atom', 'FG', or 'FR'")
 
-# Split
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, test_size=0.2, random_state=42) # Split the data into training and testing sets
+# ================= Split dataset =================
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y_labels, test_size=0.2, random_state=42)
 
+# ================= Normalization =================
 # Scale inputs
-scaler_X = MinMaxScaler()  # fitting over X_train to avoid data leakage
+scaler_X = MinMaxScaler()
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
 
-# Scale outputs 
+# Scale outputs
 scaler_Y = MinMaxScaler()
 Y_train_scaled = scaler_Y.fit_transform(Y_train)
-Y_test_scaled = scaler_Y.transform(Y_test)   
+Y_test_scaled = scaler_Y.transform(Y_test)
 
-# ------------ Model Definition, Training, and Evaluation ---------------
-if Load_model and os.path.exists(model_path):
-    print(f"------- [INFO] Loading pre-trained model from {model_path} -------")
-    net = tf.keras.models.load_model(model_path)
-
-    if os.path.exists(history_path):        # Load training history
-        with open(history_path, "r") as f:  # "r" = reading mode
-            history_dict = json.load(f)
-            MSE_training_history, MSE_val_history = extract_history(history_dict) # "extract_history" from Utils.py --> extract training and validation MSE from history dictionary
+# ================= Model Selection =================
+if model_choice == "linear":
+    model = LinearRegression()
+elif model_choice == "ridge":
+    model = Ridge(alpha=5)
+elif model_choice == "lasso":
+    model = Lasso(alpha=0.0001, max_iter=5000)
 else:
-    print("------- [INFO] Training model from scratch -------")
-    # Define network
-    net = tf.keras.models.Sequential()
-    net.add(tf.keras.layers.Input(shape=(X_train.shape[1],)))
-    for units in hidden_layers:
-        net.add(tf.keras.layers.Dense(units, activation=activation_function))
-    net.add(tf.keras.layers.Dense(Y_labels.shape[1], activation="linear"))
-    
-    # Compile
-    net.compile(optimizer='adam', loss='mse', metrics=['mse'])
-    
-    # Early stopping callback
-    early_stop = tf.keras.callbacks.EarlyStopping(
-        monitor = 'val_loss',           # monitor validation loss
-        patience = patience,            # stop if no improvement after patience % of total epochs
-        restore_best_weights = True     # restore weights from best epoch
-    )
-    
-    # Train
-    start_time = time.time()                 # start time measurement
-    history = net.fit(X_train_scaled, Y_train_scaled, validation_split = 0.2, epochs=epochs, batch_size=32, verbose=1, callbacks=[early_stop])
-    training_time = time.time() - start_time # end time measurement
-    
-    # Extract and save training history to JSON
-    MSE_training_history, MSE_val_history = extract_history(history.history)
-    with open(history_path, "w") as f:
-        json.dump(history.history, f) # save history as JSON
-    
-    # Save model after training
-    print("------- [INFO] Trained model saved -------")
-    net.save(model_path)
+    raise ValueError("Invalid model_choice")
 
-# Predict (rescale predictions)
-Y_pred_scaled = net.predict(X_test_scaled)
+# ================= Training and Prediction =================
+start = timer()
+model.fit(X_train_scaled, Y_train_scaled)
+Y_pred_scaled = model.predict(X_test_scaled)
+training_time = timer() - start
+
+# Inverse-transform predictions to original scale
 Y_pred = scaler_Y.inverse_transform(Y_pred_scaled)
 
-# r2 score for each property
-r2_scores = [r2_score(Y_test[:, i], Y_pred[:, i]) for i in range(Y_test.shape[1])] # Y_test/pred[:, i] corresponds to each property, Y_test.shape[1]=12 (tot num of properties)
+# ================= Metrics =================
+mse = mean_squared_error(Y_test, Y_pred)
+r2_scores = [r2_score(Y_test[:, i], Y_pred[:, i]) for i in range(Y_test.shape[1])]
+print(f"[INFO] Model: {model_choice}")
+print(f"MSE: {mse:.6f}")
+print(f"Training time: {training_time:.2f} s")
 
-# Property names + u.m.
-property_names = ['μ (D)', 'α (a₀³)', 'ε_HOMO (Ha)', 'ε_LUMO (Ha)', 'ε_gap (Ha)', '⟨r²⟩ (a₀²)', 'zpve (Ha)', 'U₀ (Ha)', 'U (Ha)', 'H (Ha)', 'G (Ha)', 'Cᵥ (cal/mol·K)']
+# ================= Property Names =================
+property_names = [
+    'μ (D)', 'α (a₀³)', 'ε_HOMO (Ha)', 'ε_LUMO (Ha)',
+    'ε_gap (Ha)', '⟨r²⟩ (a₀²)', 'zpve (Ha)', 'U₀ (Ha)',
+    'U (Ha)', 'H (Ha)', 'G (Ha)', 'Cᵥ (cal/mol·K)'
+]
 
-# ------------- Plot Section -------------
-plots_base_dir = "Plots"
-plots_dir = os.path.join(plots_base_dir, info, activation_function, subfolder)
+# ================= Plots =================
+plots_dir = os.path.join("Plots", "ML", info, model_choice)
 os.makedirs(plots_dir, exist_ok=True)
 
-plot_training_curves(MSE_training_history, MSE_val_history, plots_dir) # Plot training curves
-plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir) # Parity plot 4x3 grid for all the molecules
+# --- Parity plots ---
+plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir)
 
-# ---------------- Save experiment info and metrics -------------------------
-save_experiment_info(plots_dir, info, activation_function, hidden_layers, epochs, patience, X_train, X_test, property_names, r2_scores, Y_test, Y_pred, Y_test_scaled, Y_pred_scaled, net, training_time)
+# --- Coefficient plots (solo barplot, tutte le proprietà in 4x3) ---
+coef = model.coef_  # shape (n_outputs, n_features)
+
+fig, axes = plt.subplots(4, 3, figsize=(18, 14))
+for i, ax in enumerate(axes.ravel()):
+    if i < coef.shape[0]:
+        ax.bar(range(coef.shape[1]), coef[i])
+        ax.set_title(property_names[i], fontsize=12)
+        ax.set_xlabel("Variable index", fontsize=9)
+        ax.set_ylabel("Value", fontsize=9)
+        ax.tick_params(axis='both', labelsize=8)
+        ax.grid(True, linestyle="--", linewidth=0.5)
+
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig(os.path.join(plots_dir, f"coefficients_grid_{model_choice}.png"), dpi=300)
+plt.show()
+plt.close(fig)
+
+print(f"[INFO] Coefficient grid plot saved in {plots_dir}")
+
+# ================= Save Experiment Info =================
+save_experiment_info(
+    plots_dir, info, model_choice, "N/A", 0, 0,
+    X_train, X_test, property_names, r2_scores,
+    Y_test, Y_pred, Y_test_scaled, Y_pred_scaled, model, training_time
+)

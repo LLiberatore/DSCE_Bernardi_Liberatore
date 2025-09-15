@@ -1,0 +1,21 @@
+===== Regression Results with K-Fold (scaled) =====
+
+Model type: ridge
+Alpha: 2
+Mean CV MSE (scaled): 0.001135 ± 0.000106
+MSE (global, scaled 0-1): 0.001029
+Training time: 0.08 seconds
+
+Mean ± Std R² scores per property (scaled):
+μ (D): 0.5049 ± 0.0184
+α (a₀³): 0.9461 ± 0.0049
+ε_HOMO (Ha): 0.6656 ± 0.0036
+ε_LUMO (Ha): 0.8418 ± 0.0039
+ε_gap (Ha): 0.8152 ± 0.0041
+⟨r²⟩ (a₀²): 0.6899 ± 0.0093
+zpve (Ha): 0.9988 ± 0.0001
+U₀ (Ha): 0.9978 ± 0.0002
+U (Ha): 0.9978 ± 0.0002
+H (Ha): 0.9978 ± 0.0002
+G (Ha): 0.9978 ± 0.0002
+Cᵥ (cal/mol·K): 0.9327 ± 0.0022
