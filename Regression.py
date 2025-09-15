@@ -11,7 +11,7 @@ from Plots import plot_parity_plots, plot_coefficients_grid
 # ------------- Configuration -------------
 info = "FR"                   # "atom", "FG", "FR"
 model_choice = "ridge"        # "linear", "ridge", "lasso"
-alpha_lasso = 0.0001
+alpha_lasso = 0.0001          
 alpha_ridge = 1
 k = 5                         # fold numbers for cross validation
 
