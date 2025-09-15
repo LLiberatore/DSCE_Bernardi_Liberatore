@@ -1,0 +1,9 @@
+Random Forest Results Summary
+============================
+
+n_estimators = 100
+  R2_global      = 0.8971
+  Training time  = 8.09 s
+----------------------------
+
+Integrated memory usage = 3312.13 MB*s

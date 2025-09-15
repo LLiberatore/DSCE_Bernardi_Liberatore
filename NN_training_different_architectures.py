@@ -12,15 +12,17 @@ from sklearn.metrics import r2_score
 # SETTINGS
 epochs = 2000
 patience = int(0.05 * epochs)
-activation_function = "relu"
+activation_function = "tanh"
 info = "FR"                    # "atom", "FG", "FR"
-SEEDS = [0, 1]                 # Seed for multiple runs
+SEEDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]                 # Seed for multiple runs
 
-architectures = {2500: {1: [27], 2: [22, 22], 3: [19, 19, 19]},  # dictionary: target_params -> {num_layers: [hidden_layer_sizes]} ex. architectures[2500][2]=[22,22]
-                 5000: {1: [54], 2: [38, 38], 3: [32, 32, 32]},
-                 7500: {1: [81], 2: [51, 51], 3: [42, 42, 42]},
-                 10000: {1: [107], 2: [63, 63], 3: [51, 51, 51]},
-                 12500: {1: [134], 2: [74, 74], 3: [59, 59, 59]} }
+#architectures = {2500: {1: [27], 2: [22, 22], 3: [19, 19, 19]},  # dictionary: target_params -> {num_layers: [hidden_layer_sizes]} ex. architectures[2500][2]=[22,22]
+#                 5000: {1: [54], 2: [38, 38], 3: [32, 32, 32]},
+#                 7500: {1: [81], 2: [51, 51], 3: [42, 42, 42]},
+#                 10000: {1: [107], 2: [63, 63], 3: [51, 51, 51]},
+#                 12500: {1: [134], 2: [74, 74], 3: [59, 59, 59]} }
+
+architectures = {5000: {1: [54]}}
 
 property_names = ['μ (D)', 'α (a0^3)', 'ε_HOMO (Ha)', 'ε_LUMO (Ha)', 'ε_gap (Ha)', '<r^2> (a0^2)', 'zpve (Ha)', 'U0 (Ha)', 'U (Ha)', 'H (Ha)', 'G (Ha)', 'Cv (cal/molK)'] # property names
 

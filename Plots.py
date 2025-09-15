@@ -104,7 +104,7 @@ def plot_training_curves(MSE_training_history, MSE_val_history, plots_dir):
 
 def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
     fig, axes = plt.subplots(4, 3, figsize=(16, 13))
-    fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
+    # fig.suptitle('Parity Plots for Test Molecules', fontsize=18)
     for i, ax in enumerate(axes.ravel()): # from shape (4,3) to (12,) --> enumerate to obtain both index and axis
         ax.scatter(Y_test[:, i], Y_pred[:, i], alpha=0.4, edgecolor='k', linewidth=0.3, s=20) # x-axes = true values, y-axes = predicted values
         ax.plot([Y_test[:, i].min(), Y_test[:, i].max()],
@@ -122,7 +122,7 @@ def plot_parity_plots(Y_test, Y_pred, r2_scores, property_names, plots_dir):
     parity_pdf = os.path.join(plots_dir, "parity_plots.pdf")
     plt.savefig(parity_png, dpi=300)
     plt.savefig(parity_pdf, format="pdf")
-    plt.show()
+
     print(f"[INFO] Parity plots saved in {plots_dir}")
     
     
